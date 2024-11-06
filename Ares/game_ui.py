@@ -17,16 +17,16 @@ class MazeGameUI:
         self.animation_speed = 100  # Default speed for idle animation
 
         self.images = {
-            '#': self.load_image("asset/Items/Boxes/Box3/Idle.png"),
-            '$': self.load_image("asset/Other/Dust Particle.png"),
-            '.': self.load_image("asset/Menu/Buttons/Close.png"),
-            '*': self.load_image("asset/Items/Checkpoints/End/End (Idle).png"),
-            ' ': self.load_image("asset/Background/Blue.png")
+            '#': self.load_image("Ares/asset/Items/Boxes/Box3/Idle.png"),
+            '$': self.load_image("Ares/asset/Other/Dust Particle.png"),
+            '.': self.load_image("Ares/asset/Menu/Buttons/Close.png"),
+            '*': self.load_image("Ares/asset/Items/Checkpoints/End/End (Idle).png"),
+            ' ': self.load_image("Ares/asset/Background/Blue.png")
         }
 
         # Load animations for '@' and '+' characters separately
-        self.ares_idle_animation = self.load_animation("asset/Main Characters/Mask Dude/Idle (32x32).png", 11)
-        self.ares_double_jump_animation = self.load_animation("asset/Main Characters/Mask Dude/Hit (32x32).png", 7)
+        self.ares_idle_animation = self.load_animation("Ares/asset/Main Characters/Mask Dude/Idle (32x32).png", 11)
+        self.ares_double_jump_animation = self.load_animation("Ares/asset/Main Characters/Mask Dude/Hit (32x32).png", 7)
         self.idle_animation_speed = 100  # Set speed for idle animation
         self.jump_animation_speed = 50  # Set speed for double jump animation
         # Frame iterators for each animation
@@ -110,7 +110,7 @@ class MazeGameUI:
         self.animation_speed = 40  # Increase speed after reaching goal
 
         # Load the new animation for Ares's idle and double jump actions
-        new_animation_path = "asset/Main Characters/Mask Dude/Double Jump (32x32).png"
+        new_animation_path = "Ares/asset/Main Characters/Mask Dude/Double Jump (32x32).png"
         self.ares_double_jump_animation = self.load_animation(new_animation_path, 6)
         self.ares_idle_animation = self.load_animation(new_animation_path, 6)
 
