@@ -41,6 +41,43 @@ class MazeGameUI:
         self.draw_grid()
         self.animate()  # Start animation loop
 
+        self.create_buttons()
+
+        # Rest of initialization code...
+
+    def create_buttons(self):
+        # Frame to contain the buttons
+        button_frame = tk.Frame(self.root)
+        button_frame.pack(pady=10)
+
+        # Button definitions
+        btn1 = tk.Button(button_frame, text="DFS", command=self.dfs)
+        btn2 = tk.Button(button_frame, text="BFS", command=self.bfs)
+        btn3 = tk.Button(button_frame, text="UCS", command=self.ucs)
+        btn4 = tk.Button(button_frame, text="A*", command=self.root.astar)
+
+        # Packing the buttons
+        btn1.grid(row=0, column=0, padx=10, pady=5)
+        btn2.grid(row=0, column=1, padx=10, pady=5)
+        btn3.grid(row=0, column=2, padx=10, pady=5)
+        btn4.grid(row=0, column=3, padx=10, pady=5)
+
+    def reset_game(self):
+        # Code to reset the game
+        print("Game reset!")
+        self.game.reset()  # Assuming you have a reset method in MazeGame
+        self.draw_grid()
+
+    def show_hint(self):
+        # Code to provide a hint to the user
+        print("Hint: Try moving up!")
+        # Display hint logic here
+
+    def speed_up(self):
+        # Code to increase the animation speed
+        print("Speeding up!")
+        self.animation_speed = max(10, self.animation_speed - 10)  # Speed up to a certain limit
+
     def load_image(self, path):
         image = Image.open(path).convert("RGBA")
         image = image.resize((self.cell_size, self.cell_size), Image.LANCZOS)
