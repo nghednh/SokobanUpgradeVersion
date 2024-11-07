@@ -182,13 +182,15 @@ class MazeGameUI:
             return
 
         def step(index):
-            
-            direction_map = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1)}
-            move_dir = solution_path[index]
-            dr, dc = direction_map[move_dir]
-            self.move((dr, dc))  # Move within the UI
-            time.sleep(1.5)
-                
-                
-        for i in range(len(solution_path)):
-            step(i)  # Start the first step
+            if index < len(solution_path):
+            # Mapping the direction and making the move
+                direction_map = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1)}
+                move_dir = solution_path[index]
+                dr, dc = direction_map[move_dir]
+                self.move((dr, dc))  # Move within the UI
+
+            # Schedule the next step with a delay
+            self.root.after(1500, step, index + 1)
+
+        # Start the first step
+        step(0)
