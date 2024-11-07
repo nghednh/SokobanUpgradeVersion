@@ -25,7 +25,7 @@ class MazeGameUI:
         }
 
         # Load animations for '@' and '+' characters separately
-        self.ares_idle_animation = self.load_animation("asset/Main Characters/Mask Dude/Idle (32x32).png", 11)
+        self.ares_idle_animation = self.load_animation("asset/Main Characters/Ninja Frog/Run (32x32).png", 12)
         self.ares_double_jump_animation = self.load_animation("asset/Main Characters/Mask Dude/Hit (32x32).png", 7)
         self.idle_animation_speed = 100  # Set speed for idle animation
         self.jump_animation_speed = 50  # Set speed for double jump animation
@@ -40,6 +40,43 @@ class MazeGameUI:
 
         self.draw_grid()
         self.animate()  # Start animation loop
+
+        self.create_buttons()
+
+        # Rest of initialization code...
+
+    def create_buttons(self):
+        # Frame to contain the buttons
+        button_frame = tk.Frame(self.root)
+        button_frame.pack(pady=10)
+
+        # Button definitions
+        btn1 = tk.Button(button_frame, text="DFS", command=self.dfs)
+        btn2 = tk.Button(button_frame, text="BFS", command=self.bfs)
+        btn3 = tk.Button(button_frame, text="UCS", command=self.ucs)
+        btn4 = tk.Button(button_frame, text="A*", command=self.astar)
+
+        # Packing the buttons
+        btn1.grid(row=0, column=0, padx=10, pady=5)
+        btn2.grid(row=0, column=1, padx=10, pady=5)
+        btn3.grid(row=0, column=2, padx=10, pady=5)
+        btn4.grid(row=0, column=3, padx=10, pady=5)
+
+    def reset_game(self):
+        # Code to reset the game
+        print("Game reset!")
+        self.game.reset()  # Assuming you have a reset method in MazeGame
+        self.draw_grid()
+
+    def show_hint(self):
+        # Code to provide a hint to the user
+        print("Hint: Try moving up!")
+        # Display hint logic here
+
+    def speed_up(self):
+        # Code to increase the animation speed
+        print("Speeding up!")
+        self.animation_speed = max(10, self.animation_speed - 10)  # Speed up to a certain limit
 
     def load_image(self, path):
         image = Image.open(path).convert("RGBA")
@@ -117,3 +154,14 @@ class MazeGameUI:
         # Update frame iterators to cycle through the new animations
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
+    def dfs(self):
+        print("dfs")
+        
+    def bfs(self):
+        print("bfs")
+
+    def ucs(self):
+        print("ucs")
+
+    def astar(self):
+        print("a*")
