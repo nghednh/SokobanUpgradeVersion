@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import itertools
 from game import MazeGame
+import time
 class MazeGameUI:
     def __init__(self, root, grid, stone_weights):
         self.root = root
@@ -155,13 +156,39 @@ class MazeGameUI:
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
     def dfs(self):
-        print("dfs")
+        solution_path=self.game.dfs()
+        if solution_path:
+            self.simulate_solution(solution_path)
+        else:
+            print("No solution")
         
     def bfs(self):
-        self.game.bfs()
+        solution_path=self.game.bfs()
+        if solution_path:
+            self.simulate_solution(solution_path)
+        else:
+            print("No solution")
 
     def ucs(self):
         print("ucs")
 
     def astar(self):
         print("a*")
+
+    def simulate_solution(self, solution_path):
+   
+        if not solution_path:
+            print("No solution path provided.")
+            return
+
+        def step(index):
+            
+            direction_map = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1)}
+            move_dir = solution_path[index]
+            dr, dc = direction_map[move_dir]
+            self.move((dr, dc))  # Move within the UI
+            time.sleep(1.5)
+                
+                
+        for i in range(len(solution_path)):
+            step(i)  # Start the first step
