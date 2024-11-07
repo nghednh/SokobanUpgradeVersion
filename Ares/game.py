@@ -127,7 +127,7 @@ class MazeGame:
                     # Capture the state after the move
                     successor_state = new_game.get_state()
                     cost = new_game.total_cost - self.total_cost
-                    successors.append((successor_state, move_dir, cost))
+                    successors.append((new_game, move_dir, cost))
 
         return successors
 
@@ -150,5 +150,39 @@ class MazeGame:
 
         return True
     
-    
+    def bfs(self):
+        queue = deque([(self, [], 0)])  # start from initial state with an empty path
+        visited = set()  # To avoid revisiting the same state
+        initial_state = self.get_state()
+        visited.add(initial_state)  # Add initial state to visited
+        print(f"Initial state: {initial_state}")
+
+        while queue:
+            (current_game, path, total_cost) = queue.popleft()
+            current_state = current_game.get_state()
+            print(f"Exploring state: {current_state}, Path: {path}, Total cost: {total_cost}")
+
+            # Check if current state is a goal state
+            if current_game.is_goal_state():
+                print("Goal reached with path:", path)
+                return path  # Return the path that leads to the goal
+
+        # Generate successors from the current state
+            for successor_game, move_dir, move_cost in current_game.getSuccessors():
+                if successor_game not in visited:
+                # Create a new MazeGame instance for the successor state
+                    # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
+                    # successor_game.ares_pos = successor_state[0]
+                    # successor_game.stone_pos = list(successor_state[1])
+                    # successor_game.total_cost = current_game.total_cost + move_cost
+
+                # Mark as visited and enqueue for further exploration
+                    visited.add(successor_game)
+                    new_path = path + [move_dir]
+                    queue.append((successor_game, new_path, total_cost + move_cost))
+                    print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
+
+        print("No solution found.")
+        return None
+
 

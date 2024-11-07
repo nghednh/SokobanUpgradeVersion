@@ -158,7 +158,7 @@ class MazeGameUI:
         print("dfs")
         
     def bfs(self):
-        print("bfs")
+        self.game.bfs()
 
     def ucs(self):
         print("ucs")
