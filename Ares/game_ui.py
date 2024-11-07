@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import itertools
 from game import MazeGame
+import time
 class MazeGameUI:
     def __init__(self, root, grid, stone_weights):
         self.root = root
@@ -156,6 +157,7 @@ class MazeGameUI:
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
     def dfs(self):
         print("dfs")
+        self.simulate_move()
         
     def bfs(self):
         print("bfs")
@@ -165,3 +167,20 @@ class MazeGameUI:
 
     def astar(self):
         print("a*")
+
+    def simulate_keypresses(self, keys):
+        """
+        Simulate a sequence of key presses.
+        :param keys: List of keys to simulate, e.g., ['w', 'a', 's', 'd']
+        """
+        for key in keys:
+            self.root.event_generate(f"<KeyPress-{key}>")
+            self.root.update()  # Update the Tkinter main loop to process the event
+            time.sleep(0.1)  # Add a slight delay between keypresses
+
+    def simulate_move(self):
+        """
+        Simulate a series of key presses to move Ares in the game.
+        """
+        keys_to_press = ['w', 'd', 's', 'a']  # Example movement sequence
+        self.simulate_keypresses(keys_to_press)
