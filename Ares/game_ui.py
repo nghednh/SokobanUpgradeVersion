@@ -147,7 +147,7 @@ class MazeGameUI:
         self.animation_speed = 40  # Increase speed after reaching goal
 
         # Load the new animation for Ares's idle and double jump actions
-        new_animation_path = "Ares/asset/Main Characters/Mask Dude/Double Jump (32x32).png"
+        new_animation_path = "asset/Main Characters/Mask Dude/Double Jump (32x32).png"
         self.ares_double_jump_animation = self.load_animation(new_animation_path, 6)
         self.ares_idle_animation = self.load_animation(new_animation_path, 6)
 
