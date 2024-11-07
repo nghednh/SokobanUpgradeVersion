@@ -1,3 +1,4 @@
+from collections import deque
 class MazeGame:
     def __init__(self, grid, stone_weights):
         self.grid = grid
@@ -103,4 +104,51 @@ class MazeGame:
         print(f"Switches: {self.switches}")
         print(self.stone_pos)
         print()
+
+    def get_state(self):
+        # The current state includes Ares's position, stone positions, and grid
+        return (self.ares_pos, tuple(self.stone_pos))
+    
+    def getSuccessors(self):
+        successors = []
+        directions = [(-1, 0, 'U'), (1, 0, 'D'), (0, -1, 'L'), (0, 1, 'R')]
+        
+        for dr, dc, move_dir in directions:
+            if self.can_move(dr, dc):  # Check if Ares can move in this direction
+                # Clone grid and move Ares to generate a successor state
+                new_grid = [row[:] for row in self.grid]  # Deep copy of the grid
+                new_game = MazeGame(new_grid, self.stone_weights)
+                new_game.ares_pos = self.ares_pos  # Start from current Ares's position
+                new_game.stone_pos = list(self.stone_pos)  # Start from current stone positions
+                new_game.total_cost = self.total_cost  # Start from current cost
+                
+                # Perform the move
+                if new_game.move((dr, dc)):  # Move in direction (dr, dc)
+                    # Capture the state after the move
+                    successor_state = new_game.get_state()
+                    cost = new_game.total_cost - self.total_cost
+                    successors.append((successor_state, move_dir, cost))
+
+        return successors
+
+    def can_move(self, dr, dc):
+        ar, ac = self.ares_pos
+        nr, nc = ar + dr, ac + dc
+
+        if not (0 <= nr < self.rows and 0 <= nc < self.cols):  # Boundary check
+            return False
+        if self.grid[nr][nc] == '#':  # Wall check
+            return False
+
+        # Check if the move involves pushing a stone
+        if self.grid[nr][nc] == '$' or self.grid[nr][nc] == '*':
+            sr, sc = nr + dr, nc + dc
+            if not (0 <= sr < self.rows and 0 <= sc < self.cols):  # Boundary check for stone push
+                return False
+            if self.grid[sr][sc] != ' ' and self.grid[sr][sc] != '.':  # Stone can't move to wall or other stone
+                return False
+
+        return True
+    
+    
 
