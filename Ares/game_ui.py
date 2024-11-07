@@ -25,7 +25,7 @@ class MazeGameUI:
         }
 
         # Load animations for '@' and '+' characters separately
-        self.ares_idle_animation = self.load_animation("asset/Main Characters/Mask Dude/Idle (32x32).png", 11)
+        self.ares_idle_animation = self.load_animation("asset/Main Characters/Ninja Frog/Run (32x32).png", 12)
         self.ares_double_jump_animation = self.load_animation("asset/Main Characters/Mask Dude/Hit (32x32).png", 7)
         self.idle_animation_speed = 100  # Set speed for idle animation
         self.jump_animation_speed = 50  # Set speed for double jump animation
@@ -54,7 +54,7 @@ class MazeGameUI:
         btn1 = tk.Button(button_frame, text="DFS", command=self.dfs)
         btn2 = tk.Button(button_frame, text="BFS", command=self.bfs)
         btn3 = tk.Button(button_frame, text="UCS", command=self.ucs)
-        btn4 = tk.Button(button_frame, text="A*", command=self.root.astar)
+        btn4 = tk.Button(button_frame, text="A*", command=self.astar)
 
         # Packing the buttons
         btn1.grid(row=0, column=0, padx=10, pady=5)
@@ -154,3 +154,14 @@ class MazeGameUI:
         # Update frame iterators to cycle through the new animations
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
+    def dfs(self):
+        print("dfs")
+        
+    def bfs(self):
+        print("bfs")
+
+    def ucs(self):
+        print("ucs")
+
+    def astar(self):
+        print("a*")
