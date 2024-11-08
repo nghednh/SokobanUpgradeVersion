@@ -2,12 +2,14 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import itertools
 from game import MazeGame
+import time
+from utils import parse_input
 class MazeGameUI:
-    def __init__(self, root, grid, stone_weights):
+    def __init__(self, root,grid, stone_weights):
         self.root = root
         self.root.title("Ares's Adventure")
 
-        self.game = MazeGame(grid, stone_weights)
+        self.game = MazeGame(grid,stone_weights)
         self.grid_frame = tk.Canvas(root, width=800, height=600, bg="white")
         self.grid_frame.pack()
         self.label_cost = tk.Label(root, text=f"Total Cost: {self.game.total_cost}")
@@ -25,7 +27,7 @@ class MazeGameUI:
         }
 
         # Load animations for '@' and '+' characters separately
-        self.ares_idle_animation = self.load_animation("asset/Main Characters/Ninja Frog/Run (32x32).png", 12)
+        self.ares_idle_animation = self.load_animation("asset/Main Characters/Mask Dude/Idle (32x32).png", 11)
         self.ares_double_jump_animation = self.load_animation("asset/Main Characters/Mask Dude/Hit (32x32).png", 7)
         self.idle_animation_speed = 100  # Set speed for idle animation
         self.jump_animation_speed = 50  # Set speed for double jump animation
@@ -39,6 +41,7 @@ class MazeGameUI:
         root.bind("<d>", lambda e: self.move((0, 1)))
 
         self.draw_grid()
+        
         self.animate()  # Start animation loop
 
         self.create_buttons()
@@ -55,17 +58,58 @@ class MazeGameUI:
         btn2 = tk.Button(button_frame, text="BFS", command=self.bfs)
         btn3 = tk.Button(button_frame, text="UCS", command=self.ucs)
         btn4 = tk.Button(button_frame, text="A*", command=self.astar)
+        btn_reset = tk.Button(button_frame,text = "Reset game",command= self.reset_game)
+        # Dropdown menu for choosing level
+        self.level_var = tk.StringVar(self.root)
+        self.level_var.set("Select Level")  # Default text for the dropdown
 
-        # Packing the buttons
-        btn1.grid(row=0, column=0, padx=10, pady=5)
-        btn2.grid(row=0, column=1, padx=10, pady=5)
-        btn3.grid(row=0, column=2, padx=10, pady=5)
-        btn4.grid(row=0, column=3, padx=10, pady=5)
+        # Options for level selection
+        level_options = {"Level 1": "input-01.txt", 
+                         "Level 2": "input-02.txt", 
+                         "Level 3": "input-03.txt",
+                         "Level 4": "input-04.txt",
+                         "Level 5": "input-05.txt",
+                         "Level 6": "input-06.txt",
+                         "Level 7": "input-07.txt",
+                         "Level 8": "input-08.txt",
+                         "Level 9": "input-09.txt",
+                         "Level 10": "input-10.txt",}
+        self.level_menu = tk.OptionMenu(button_frame, self.level_var, *level_options.keys())
+        self.level_menu.pack(side="left", padx=5)
+        btn5 = tk.Button(button_frame, text="Load Level", command=lambda: self.load_selected_level(level_options))
+        btn5.pack(side="left", padx=5)
+        btn1.pack(side="left", padx=10, pady=5)
+        btn2.pack(side="left", padx=10, pady=5)
+        btn3.pack(side="left", padx=10, pady=5)
+        btn4.pack(side="left", padx=10, pady=5)
+        btn_reset.pack(side="left", padx=10, pady=5)
 
+    def load_selected_level(self, level_options):
+        # Get the chosen level's filename from the level_options dictionary
+        selected_level = self.level_var.get()
+        if selected_level in level_options:
+            filename = level_options[selected_level]
+            self.grid_frame.delete("all")  # Clear the canvas
+            self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
+            self.goal_reached = False  # Reset goal state          
+            self.game = None  # Remove the current game instance
+            gird, stone_weights = parse_input(filename)
+            self.game = MazeGame(gird, stone_weights)
+            self.reset_animation()
+            self.draw_grid()
+
+        else:
+            print("Please select a valid level.")
     def reset_game(self):
         # Code to reset the game
         print("Game reset!")
-        self.game.reset()  # Assuming you have a reset method in MazeGame
+        self.grid_frame.delete("all")  # Clear the canvas
+        self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
+        self.goal_reached = False  # Reset goal state          
+        self.game.reset()
+       
+        self.reset_animation()
+
         self.draw_grid()
 
     def show_hint(self):
@@ -154,14 +198,56 @@ class MazeGameUI:
         # Update frame iterators to cycle through the new animations
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
+    def reset_animation(self):
+        self.animation_speed = 100  
+        self.ares_idle_animation = self.load_animation("asset/Main Characters/Mask Dude/Idle (32x32).png", 11)
+        self.ares_double_jump_animation = self.load_animation("asset/Main Characters/Mask Dude/Hit (32x32).png", 7)
+        self.idle_animation_speed = 100  # Set speed for idle animation
+        self.jump_animation_speed = 50  # Set speed for double jump animation
+        # Frame iterators for each animation
+        self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
+        self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
     def dfs(self):
-        print("dfs")
+        solution_path=self.game.dfs()
+        if solution_path:
+            self.simulate_solution(solution_path)
+        else:
+            print("No solution")
         
     def bfs(self):
-        print("bfs")
+        solution_path=self.game.bfs()
+        if solution_path:
+            self.simulate_solution(solution_path)
+        else:
+            print("No solution")
 
     def ucs(self):
-        print("ucs")
+        solution_path=self.game.bfs()
+        if solution_path:
+            self.simulate_solution(solution_path)
+        else:
+            print("No solution")
 
     def astar(self):
         print("a*")
+
+    def simulate_solution(self, solution_path):
+   
+        if not solution_path:
+            print("No solution path provided.")
+            return
+
+        def step(index):
+            if index < len(solution_path):
+            # Mapping the direction and making the move
+                direction_map = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1)}
+                move_dir = solution_path[index]
+                dr, dc = direction_map[move_dir]
+                self.move((dr, dc))  # Move within the UI
+
+            # Schedule the next step with a delay
+            self.root.after(100, step, index + 1)
+
+        # Start the first step
+        step(0)
+
