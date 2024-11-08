@@ -1,3 +1,5 @@
+import time
+from collections import deque
 class MazeGame:
     def __init__(self, grid, stone_weights):
         self.grid = grid
@@ -9,6 +11,7 @@ class MazeGame:
         self.switches = self.find_switch_positions()
         #self.goal_reached = False
         self.total_cost = 0
+        
 
     def find_stone_pos(self):
         stonePos = []
@@ -106,4 +109,123 @@ class MazeGame:
     def reset(self):
         print(f"reset is valiable")
 
+
+    def get_state(self):
+        # The current state includes Ares's position, stone positions, and grid
+        return (self.ares_pos, tuple(self.stone_pos))
+    
+    def getSuccessors(self):
+        successors = []
+        directions = [(-1, 0, 'U'), (1, 0, 'D'), (0, -1, 'L'), (0, 1, 'R')]
+        
+        for dr, dc, move_dir in directions:
+            if self.can_move(dr, dc):  # Check if Ares can move in this direction
+                # Clone grid and move Ares to generate a successor state
+                new_grid = [row[:] for row in self.grid]  # Deep copy of the grid
+                new_game = MazeGame(new_grid, self.stone_weights)
+                new_game.ares_pos = self.ares_pos  # Start from current Ares's position
+                new_game.stone_pos = list(self.stone_pos)  # Start from current stone positions
+                new_game.total_cost = self.total_cost  # Start from current cost
+                
+                # Perform the move
+                if new_game.move((dr, dc)):  # Move in direction (dr, dc)
+                    # Capture the state after the move
+                    successor_state = new_game.get_state()
+                    cost = new_game.total_cost - self.total_cost
+                    successors.append((new_game, move_dir, cost))
+
+        return successors
+
+    def can_move(self, dr, dc):
+        ar, ac = self.ares_pos
+        nr, nc = ar + dr, ac + dc
+
+        if not (0 <= nr < self.rows and 0 <= nc < self.cols):  # Boundary check
+            return False
+        if self.grid[nr][nc] == '#':  # Wall check
+            return False
+
+        # Check if the move involves pushing a stone
+        if self.grid[nr][nc] == '$' or self.grid[nr][nc] == '*':
+            sr, sc = nr + dr, nc + dc
+            if not (0 <= sr < self.rows and 0 <= sc < self.cols):  # Boundary check for stone push
+                return False
+            if self.grid[sr][sc] != ' ' and self.grid[sr][sc] != '.':  # Stone can't move to wall or other stone
+                return False
+
+        return True
+    
+    def bfs(self):
+        queue = deque([(self, [], 0)])  # start from initial state with an empty path
+        visited = set()  # To avoid revisiting the same state
+        initial_state = self.get_state()
+        visited.add(initial_state)  # Add initial state to visited
+        print(f"Initial state: {initial_state}")
+
+        while queue:
+            (current_game, path, total_cost) = queue.popleft()
+            current_state = current_game.get_state()
+            print(f"Exploring state: {current_state}, Path: {path}, Total cost: {total_cost}")
+
+            # Check if current state is a goal state
+            if current_game.is_goal_state():
+                print("Goal reached with path:", path)
+                return path  # Return the path that leads to the goal
+
+        # Generate successors from the current state
+            for successor_game, move_dir, move_cost in current_game.getSuccessors():
+                successor_state = successor_game.get_state()
+                if successor_state not in visited:
+                # Create a new MazeGame instance for the successor state
+                    # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
+                    # successor_game.ares_pos = successor_state[0]
+                    # successor_game.stone_pos = list(successor_state[1])
+                    # successor_game.total_cost = current_game.total_cost + move_cost
+
+                # Mark as visited and enqueue for further exploration
+                    visited.add(successor_state)
+                    new_path = path + [move_dir]
+                    queue.append((successor_game, new_path, total_cost + move_cost))
+                    print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
+
+        print("No solution found.")
+        return None
+    def dfs(self):
+        stack = [(self, [], 0)]  # start from initial state with an empty path
+        visited = set()  # To avoid revisiting the same state
+        initial_state = self.get_state()
+        visited.add(initial_state)  # Add initial state to visited
+        print(f"Initial state: {initial_state}")
+
+        while stack:
+            (current_game, path, total_cost) = stack.pop()
+            current_state = current_game.get_state()
+            print(f"Exploring state: {current_state}, Path: {path}, Total cost: {total_cost}")
+
+            # Check if current state is a goal state
+            if current_game.is_goal_state():
+                print("Goal reached with path:", path)
+                return path  # Return the path that leads to the goal
+
+        # Generate successors from the current state
+            for successor_game, move_dir, move_cost in current_game.getSuccessors():
+                successor_state = successor_game.get_state()
+                if successor_state not in visited:
+                # Create a new MazeGame instance for the successor state
+                    # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
+                    # successor_game.ares_pos = successor_state[0]
+                    # successor_game.stone_pos = list(successor_state[1])
+                    # successor_game.total_cost = current_game.total_cost + move_cost
+
+                # Mark as visited and enqueue for further exploration
+                    visited.add(successor_state)
+                    new_path = path + [move_dir]
+                    stack.append((successor_game, new_path, total_cost + move_cost))
+                    print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
+
+        print("No solution found.")
+        return None
+    
+
+    
 
