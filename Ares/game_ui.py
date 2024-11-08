@@ -2,12 +2,13 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import itertools
 from game import MazeGame
+from utils import parse_input
 class MazeGameUI:
-    def __init__(self, root, grid, stone_weights):
+    def __init__(self, root,grid, stone_weights):
         self.root = root
         self.root.title("Ares's Adventure")
 
-        self.game = MazeGame(grid, stone_weights)
+        self.game = MazeGame(grid,stone_weights)
         self.grid_frame = tk.Canvas(root, width=800, height=600, bg="white")
         self.grid_frame.pack()
         self.label_cost = tk.Label(root, text=f"Total Cost: {self.game.total_cost}")
@@ -56,12 +57,45 @@ class MazeGameUI:
         btn3 = tk.Button(button_frame, text="UCS", command=self.ucs)
         btn4 = tk.Button(button_frame, text="A*", command=self.astar)
 
-        # Packing the buttons
-        btn1.grid(row=0, column=0, padx=10, pady=5)
-        btn2.grid(row=0, column=1, padx=10, pady=5)
-        btn3.grid(row=0, column=2, padx=10, pady=5)
-        btn4.grid(row=0, column=3, padx=10, pady=5)
+        # Dropdown menu for choosing level
+        self.level_var = tk.StringVar(self.root)
+        self.level_var.set("Select Level")  # Default text for the dropdown
 
+        # Options for level selection
+        level_options = {"Level 1": "input-01.txt", "Level 2": "input-02.txt", "Level 3": "input-03.txt"}
+        self.level_menu = tk.OptionMenu(button_frame, self.level_var, *level_options.keys())
+        self.level_menu.pack(side="left", padx=5)
+        #btn5 = tk.Button(button_frame, text="Level", command=self.level)
+        # Load button to load the selected level
+        btn5 = tk.Button(button_frame, text="Load Level", command=lambda: self.load_selected_level(level_options))
+        btn5.pack(side="left", padx=5)
+
+        # Packing the buttons
+        # btn1.grid(row=0, column=0, padx=10, pady=5)
+        # btn2.grid(row=0, column=1, padx=10, pady=5)
+        # btn3.grid(row=0, column=2, padx=10, pady=5)
+        # btn4.grid(row=0, column=3, padx=10, pady=5)
+        # btn5.grid(row = 0, column=4,padx=10, pady=5)
+        btn1.pack(side="left", padx=10, pady=5)
+        btn2.pack(side="left", padx=10, pady=5)
+        btn3.pack(side="left", padx=10, pady=5)
+        btn4.pack(side="left", padx=10, pady=5)
+        btn5.pack(side="left", padx=10, pady=5)
+
+    def load_selected_level(self, level_options):
+        # Get the chosen level's filename from the level_options dictionary
+        selected_level = self.level_var.get()
+        if selected_level in level_options:
+            filename = level_options[selected_level]
+            self.grid_frame.delete("all")  # Clear the canvas
+            self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
+            self.goal_reached = False  # Reset goal state
+            self.game = None  # Remove the current game instance
+            gird, stone_weights = parse_input(filename)
+            self.game = MazeGame(gird, stone_weights)
+
+        else:
+            print("Please select a valid level.")
     def reset_game(self):
         # Code to reset the game
         print("Game reset!")
@@ -165,3 +199,9 @@ class MazeGameUI:
 
     def astar(self):
         print("a*")
+
+    def level(self):
+        #self.reset_game()
+        grid, stone_weights = parse_input("input-01.txt")
+        self.game = MazeGame(grid,stone_weights)
+

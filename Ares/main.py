@@ -3,9 +3,9 @@ from utils import parse_input
 from game_ui import MazeGameUI
 
 def main():
-    grid, stone_weights = parse_input("input-01.txt")
+    grid, stone_weights = parse_input("input-02.txt")
     root = tk.Tk()
-    app = MazeGameUI(root, grid, stone_weights)
+    app = MazeGameUI(root,grid, stone_weights)
     root.mainloop()
 
 
