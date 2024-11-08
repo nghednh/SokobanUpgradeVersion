@@ -106,6 +106,9 @@ class MazeGame:
         print(f"Switches: {self.switches}")
         print(self.stone_pos)
         print()
+    def reset(self):
+        print(f"reset is valiable")
+
 
     def get_state(self):
         # The current state includes Ares's position, stone positions, and grid
