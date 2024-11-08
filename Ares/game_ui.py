@@ -41,6 +41,7 @@ class MazeGameUI:
         root.bind("<d>", lambda e: self.move((0, 1)))
 
         self.draw_grid()
+        
         self.animate()  # Start animation loop
 
         self.create_buttons()
@@ -90,17 +91,25 @@ class MazeGameUI:
             filename = level_options[selected_level]
             self.grid_frame.delete("all")  # Clear the canvas
             self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
-            self.goal_reached = False  # Reset goal state
+            self.goal_reached = False  # Reset goal state          
             self.game = None  # Remove the current game instance
             gird, stone_weights = parse_input(filename)
             self.game = MazeGame(gird, stone_weights)
+            self.reset_animation()
+            self.draw_grid()
 
         else:
             print("Please select a valid level.")
     def reset_game(self):
         # Code to reset the game
         print("Game reset!")
-        self.game.reset()  # Assuming you have a reset method in MazeGame
+        self.grid_frame.delete("all")  # Clear the canvas
+        self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
+        self.goal_reached = False  # Reset goal state          
+        self.game.reset()
+       
+        self.reset_animation()
+
         self.draw_grid()
 
     def show_hint(self):
@@ -189,6 +198,15 @@ class MazeGameUI:
         # Update frame iterators to cycle through the new animations
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
+    def reset_animation(self):
+        self.animation_speed = 100  
+        self.ares_idle_animation = self.load_animation("asset/Main Characters/Mask Dude/Idle (32x32).png", 11)
+        self.ares_double_jump_animation = self.load_animation("asset/Main Characters/Mask Dude/Hit (32x32).png", 7)
+        self.idle_animation_speed = 100  # Set speed for idle animation
+        self.jump_animation_speed = 50  # Set speed for double jump animation
+        # Frame iterators for each animation
+        self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
+        self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
     def dfs(self):
         solution_path=self.game.dfs()
         if solution_path:
@@ -204,7 +222,11 @@ class MazeGameUI:
             print("No solution")
 
     def ucs(self):
-        print("ucs")
+        solution_path=self.game.bfs()
+        if solution_path:
+            self.simulate_solution(solution_path)
+        else:
+            print("No solution")
 
     def astar(self):
         print("a*")

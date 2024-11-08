@@ -225,7 +225,8 @@ class MazeGame:
 
         print("No solution found.")
         return None
-    
+    def ucs(self):
+        print(f"ucs")
 
     
 
