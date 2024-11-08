@@ -198,6 +198,7 @@ class MazeGameUI:
         # Update frame iterators to cycle through the new animations
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
+
     def reset_animation(self):
         self.animation_speed = 100  
         self.ares_idle_animation = self.load_animation("asset/Main Characters/Mask Dude/Idle (32x32).png", 11)
@@ -207,6 +208,7 @@ class MazeGameUI:
         # Frame iterators for each animation
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
+        
     def dfs(self):
         solution_path=self.game.dfs()
         if solution_path:

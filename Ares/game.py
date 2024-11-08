@@ -1,5 +1,6 @@
 import time
 from collections import deque
+import heapq
 class MazeGame:
     def __init__(self, grid, stone_weights):
         self.grid = grid
@@ -226,7 +227,32 @@ class MazeGame:
         print("No solution found.")
         return None
     def ucs(self):
-        print(f"ucs")
 
+        frontier = [(0, self, [])]  # (cost, position, path)
+        # Dictionary to track the minimum cost to reach each state
+        path_cost = {self.get_state(): 0}
+        initial_state = self.get_state()
+        explored = set()
+        explored.add(initial_state)
+        while frontier:
+            #pop the node with lowest cost 
+            cost,current_position,path = heapq.heappop(frontier)
+            current_state = current_position.get_state()
+            # If we reach the goal, return the path
+            if current_position.is_goal_state():
+                return path
+
+            for successor_game, move_dir, move_cost in current_position.getSuccessors():   
+                successor_state = successor_game.get_state()
+                if successor_state not in explored or (cost + move_cost) < path_cost[successor_state]:
+                    # add duplicated entry but when node expand this code in explored and has more cost than current cost 
+                    # so it does not affect to algorithm
+                    path_cost[successor_state] = cost + move_cost
+                    new_path = path + [move_dir]
+                    frontier.append((successor_game,new_path,cost+ move_cost))
+                    explored.add(successor_state)
+                    print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {cost + move_cost}")
+        print(f"No Solution found.")            
+        return None
     
 
