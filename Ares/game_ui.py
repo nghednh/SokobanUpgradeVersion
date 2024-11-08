@@ -190,7 +190,7 @@ class MazeGameUI:
                 self.move((dr, dc))  # Move within the UI
 
             # Schedule the next step with a delay
-            self.root.after(1500, step, index + 1)
+            self.root.after(100, step, index + 1)
 
         # Start the first step
         step(0)
