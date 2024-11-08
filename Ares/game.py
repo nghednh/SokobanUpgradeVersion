@@ -103,4 +103,7 @@ class MazeGame:
         print(f"Switches: {self.switches}")
         print(self.stone_pos)
         print()
+    def reset(self):
+        print(f"reset is valiable")
+
 

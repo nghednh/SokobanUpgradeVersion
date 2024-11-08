@@ -56,31 +56,31 @@ class MazeGameUI:
         btn2 = tk.Button(button_frame, text="BFS", command=self.bfs)
         btn3 = tk.Button(button_frame, text="UCS", command=self.ucs)
         btn4 = tk.Button(button_frame, text="A*", command=self.astar)
-
+        btn_reset = tk.Button(button_frame,text = "Reset game",command= self.reset_game)
         # Dropdown menu for choosing level
         self.level_var = tk.StringVar(self.root)
         self.level_var.set("Select Level")  # Default text for the dropdown
 
         # Options for level selection
-        level_options = {"Level 1": "input-01.txt", "Level 2": "input-02.txt", "Level 3": "input-03.txt"}
+        level_options = {"Level 1": "input-01.txt", 
+                         "Level 2": "input-02.txt", 
+                         "Level 3": "input-03.txt",
+                         "Level 4": "input-04.txt",
+                         "Level 5": "input-05.txt",
+                         "Level 6": "input-06.txt",
+                         "Level 7": "input-07.txt",
+                         "Level 8": "input-08.txt",
+                         "Level 9": "input-09.txt",
+                         "Level 10": "input-10.txt",}
         self.level_menu = tk.OptionMenu(button_frame, self.level_var, *level_options.keys())
         self.level_menu.pack(side="left", padx=5)
-        #btn5 = tk.Button(button_frame, text="Level", command=self.level)
-        # Load button to load the selected level
         btn5 = tk.Button(button_frame, text="Load Level", command=lambda: self.load_selected_level(level_options))
         btn5.pack(side="left", padx=5)
-
-        # Packing the buttons
-        # btn1.grid(row=0, column=0, padx=10, pady=5)
-        # btn2.grid(row=0, column=1, padx=10, pady=5)
-        # btn3.grid(row=0, column=2, padx=10, pady=5)
-        # btn4.grid(row=0, column=3, padx=10, pady=5)
-        # btn5.grid(row = 0, column=4,padx=10, pady=5)
         btn1.pack(side="left", padx=10, pady=5)
         btn2.pack(side="left", padx=10, pady=5)
         btn3.pack(side="left", padx=10, pady=5)
         btn4.pack(side="left", padx=10, pady=5)
-        btn5.pack(side="left", padx=10, pady=5)
+        btn_reset.pack(side="left", padx=10, pady=5)
 
     def load_selected_level(self, level_options):
         # Get the chosen level's filename from the level_options dictionary
@@ -200,8 +200,4 @@ class MazeGameUI:
     def astar(self):
         print("a*")
 
-    def level(self):
-        #self.reset_game()
-        grid, stone_weights = parse_input("input-01.txt")
-        self.game = MazeGame(grid,stone_weights)
 
