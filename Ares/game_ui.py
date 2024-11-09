@@ -18,7 +18,7 @@ class MazeGameUI:
         self.label_cost.pack()
         self.goal_reached=False
         self.cell_size = 50
-        self.level = 2 
+        self.level = '01'
         self.animation_speed = 100  # Default speed for idle animation
 
         self.images = {
@@ -62,14 +62,15 @@ class MazeGameUI:
         btn3 = tk.Button(button_frame, text="UCS", command=self.ucs)
         btn4 = tk.Button(button_frame, text="A*", command=self.astar)
         btn_reset = tk.Button(button_frame,text = "Reset game",command= self.reset_game)
+        btn_output = tk.Button(button_frame, text="Output", command=self.generate_all_outputs)
         # Dropdown menu for choosing level
         self.level_var = tk.StringVar(self.root)
         self.level_var.set("Level 1")  # Default text for the dropdown
 
         # Options for level selection
-        level_options = {"Level 1": "input-01.txt", 
+        level_options = {"Level 1": "input-03.txt",
                          "Level 2": "input-02.txt", 
-                         "Level 3": "input-03.txt",
+                         "Level 3": "input-01.txt",
                          "Level 4": "input-04.txt",
                          "Level 5": "input-05.txt",
                          "Level 6": "input-06.txt",
@@ -87,6 +88,7 @@ class MazeGameUI:
         btn3.pack(side="left", padx=10, pady=5)
         btn4.pack(side="left", padx=10, pady=5)
         btn_reset.pack(side="left", padx=10, pady=5)
+        btn_output.pack(side="left", padx=10, pady=5)
 
     def load_selected_level(self, level_options):
         # Get the chosen level's filename from the level_options dictionary
@@ -215,24 +217,10 @@ class MazeGameUI:
         # Frame iterators for each animation
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
-        
-    def dfs(self):
-        solution_path=self.game.dfs()
-        if solution_path:
-            self.simulate_solution(solution_path)
-        else:
-            print("No solution")
-        
-    def bfs(self):
-        solution_path=self.game.bfs()
-        if solution_path:
-            self.simulate_solution(solution_path)
-        else:
-            print("No solution")
 
-    def ucs(self):
-        result=self.game.ucs()
-        solution_path = result["solution_path"]
+    def dfs(self):
+        result = self.game.dfs()
+        solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
             steps = result["steps"]
@@ -240,16 +228,52 @@ class MazeGameUI:
             cost = result["cost"]
             time_ms = result["time_ms"]
             memory_mb = result["memory_mb"]
-            self.write_output("UCS", solution_path, steps, cost, nodes_generated,time_ms,memory_mb)
+            self.write_output("DFS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
+        else:
+            print("DFS: No solution")
+
+    def bfs(self):
+        result = self.game.bfs()
+        print("BFS result:", result)  # Debugging: Check the output of BFS
+        solution_path = result.get("solution_path")
+        if solution_path:
+            self.simulate_solution(solution_path)
+            steps = result["steps"]
+            nodes_generated = result["nodes_generated"]
+            cost = result["cost"]
+            time_ms = result["time_ms"]
+            memory_mb = result["memory_mb"]
+            self.write_output("BFS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
+        else:
+            print("BFS: No solution")
+
+    def ucs(self):
+        result = self.game.ucs()
+        solution_path = result.get("solution_path")
+        if solution_path:
+            self.simulate_solution(solution_path)
+            steps = result["steps"]
+            nodes_generated = result["nodes_generated"]
+            cost = result["cost"]
+            time_ms = result["time_ms"]
+            memory_mb = result["memory_mb"]
+            self.write_output("UCS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
             print("No solution")
 
     def astar(self):
-        solution_path=self.game.a_star()
+        result = self.game.a_star()
+        solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
+            steps = result["steps"]
+            nodes_generated = result["nodes_generated"]
+            cost = result["cost"]
+            time_ms = result["time_ms"]
+            memory_mb = result["memory_mb"]
+            self.write_output("A*", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
-            print("No solution")
+            print("A*: No solution")
 
     def simulate_solution(self, solution_path):
    
@@ -273,18 +297,52 @@ class MazeGameUI:
 
         # Start the first step
         step(0)
-        
-    def write_output(self,algorithm_name,solution_path, steps, cost, nodes_generated,time_ms,memory_mb):
-    
-        # Prepare the output file path
-        output_filename = f"output-{self.level}.txt"
 
+    def write_output(self, file, algorithm_name, solution_path, steps, cost, nodes_generated, time_ms, memory_mb):
         # Prepare solution details for output
-        solution_string = ''.join(solution_path)  
+        solution_string = ''.join(solution_path)
 
-        # Write to output file
+        # Write the results to the provided file
+        file.write(f"{algorithm_name}\n")
+        file.write(f"Steps: {steps}, Cost: {cost}, Nodes: {nodes_generated}, "
+                   f"Time (ms): {time_ms:.2f}, Memory (MB): {memory_mb:.2f}\n")
+        file.write(solution_string + "\n\n")
+
+    def generate_all_outputs(self):
+        # Dictionary of algorithms to run
+        algorithms = {
+            "BFS": self.game.bfs,
+            "UCS": self.game.ucs,
+            "A*": self.game.a_star,
+            "DFS": self.game.dfs
+        }
+
+        # Open the output file for all algorithms
+        output_filename = f"outputfinal-{self.level}.txt"
         with open(output_filename, 'w') as f:
-            f.write(f"{algorithm_name}\n")
-            f.write(f"Steps: {steps}, Cost: {cost}, Node: {nodes_generated}, "
-                    f"Time (ms): {time_ms:.2f}, Memory (MB): {memory_mb:.2f}\n")
-            f.write(solution_string)
+            # Loop through each algorithm, run it, and write its output
+            for algorithm_name, algorithm_function in algorithms.items():
+                result = algorithm_function()
+
+                if result and "solution_path" in result:
+                    solution_path = result["solution_path"]
+                    steps = result.get("steps", len(solution_path))
+                    cost = result.get("cost", 0)
+                    nodes_generated = result.get("nodes_generated", 0)
+                    time_ms = result.get("time_ms", 0.0)
+                    memory_mb = result.get("memory_mb", 0.0)
+
+                    # Write results to the file
+                    self.write_output(
+                        file=f,
+                        algorithm_name=algorithm_name,
+                        solution_path=solution_path,
+                        steps=steps,
+                        cost=cost,
+                        nodes_generated=nodes_generated,
+                        time_ms=time_ms,
+                        memory_mb=memory_mb
+                    )
+                else:
+                    # Write a message if there is no solution found
+                    f.write(f"{algorithm_name}\nNo solution\n\n")
