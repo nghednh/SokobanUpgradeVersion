@@ -3,6 +3,18 @@ from collections import deque
 import heapq
 import tracemalloc
 import itertools
+
+class PriorityQueueNode:
+    def __init__(self, estimated_total_cost, cost, game, path):
+        self.estimated_total_cost = estimated_total_cost
+        self.cost = cost
+        self.game = game
+        self.path = path
+
+    def __lt__(self, other):
+        # Only compare by estimated_total_cost
+        return self.estimated_total_cost < other.estimated_total_cost
+
 class MazeGame:
     def __init__(self, grid, stone_weights):
         self.grid = grid
@@ -10,11 +22,25 @@ class MazeGame:
         self.rows = len(grid)
         self.cols = len(grid[0]) if self.rows > 0 else 0
         self.stone_pos = self.find_stone_pos()
+        self.button_pos = self.find_button_pos()
         self.ares_pos = self.find_ares_position()
         self.switches = self.find_switch_positions()
         #self.goal_reached = False
         self.total_cost = 0
         
+    def dist(self,x, y):
+        return abs(x[0]-y[0])+abs(x[1]-y[1])
+    
+    def heuristic(self,state):
+        print("Why do gods just eat one of our button?")
+        print(state[1])
+        print(self.button_pos)
+        print(self.stone_weights)
+        hValue=0
+        for idx in range(len(self.stone_pos)):
+            hValue = hValue + self.dist((state[1][idx][0],state[1][idx][1]),self.button_pos[idx])*self.stone_weights[idx]
+        print(hValue)
+        return hValue
 
     def find_stone_pos(self):
         stonePos = []
@@ -24,7 +50,19 @@ class MazeGame:
                 if self.grid[r][c]=='$' or self.grid[r][c]=='*': 
                     stonePos.append((r,c,idx))
                     idx = idx + 1
-        return stonePos
+        return stonePos 
+
+    def find_button_pos(self):
+        #print(self.grid)
+        buttonPos = []
+        for r in range(self.rows):
+            print(self.grid[r])
+            for c in range(self.cols):
+                #print(self.grid[r][c])
+                if self.grid[r][c]=='.' or self.grid[r][c]=='*' or self.grid[r][c]=='+': 
+                    buttonPos.append((r,c))
+        print(buttonPos)
+        return buttonPos
 
     def find_ares_position(self):
         for r in range(self.rows):
@@ -163,6 +201,58 @@ class MazeGame:
 
         return True
     
+    def a_star(self):
+        priority_queue = []  # Priority queue to store nodes by estimated total cost
+        initial_state = self.get_state()
+        initial_path = []
+        initial_cost = 0
+        initial_estimated_cost = initial_cost + self.heuristic(initial_state)
+
+        # Add the initial state to the priority queue with estimated total cost
+        node = PriorityQueueNode(initial_estimated_cost, initial_cost, self, initial_path)
+        heapq.heappush(priority_queue, node)
+        visited = set()  # To avoid revisiting the same state
+        visited.add(initial_state)  # Mark initial state as visited
+
+        print(f"Initial state: {initial_state}")
+
+        while priority_queue:
+            # Pop the state with the lowest estimated total cost
+            node = heapq.heappop(priority_queue)
+            print(node)
+            estimated_cost = node.estimated_total_cost
+            current_cost = node.cost
+            current_game = node.game
+            path = node.path
+            current_state = current_game.get_state()
+
+            print(f"Exploring state: {current_state}, Path: {path}, Cost: {current_cost}, Estimated Total Cost: {estimated_cost}")
+
+            # Check if the current state is a goal state
+            if current_game.is_goal_state():
+                print("Goal reached with path:", path)
+                return path  # Return the path that leads to the goal
+
+            # Generate successors from the current state
+            for successor_game, move_dir, move_cost in current_game.getSuccessors():
+                successor_state = successor_game.get_state()
+
+                if successor_state not in visited:
+                    # Mark as visited to prevent re-exploration
+                    visited.add(successor_state)
+
+                    # Calculate the new path, cost, and estimated total cost
+                    new_path = path + [move_dir]
+                    new_cost = current_cost + move_cost
+                    estimated_total_cost = new_cost + successor_game.heuristic(successor_state)
+
+                    # Add the successor to the priority queue
+                    node = PriorityQueueNode(estimated_total_cost, new_cost, successor_game, new_path)
+                    heapq.heappush(priority_queue, node)
+
+        print("No solution found.")
+        return None
+
     def bfs(self):
         queue = deque([(self, [], 0)])  # start from initial state with an empty path
         visited = set()  # To avoid revisiting the same state

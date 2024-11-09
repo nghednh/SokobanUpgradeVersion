@@ -12,7 +12,7 @@ class MazeGameUI:
         self.root.title("Ares's Adventure")
 
         self.game = MazeGame(grid,stone_weights)
-        self.grid_frame = tk.Canvas(root, width=800, height=600, bg="white")
+        self.grid_frame = tk.Canvas(root, width=1600, height=800, bg="white")
         self.grid_frame.pack()
         self.label_cost = tk.Label(root, text=f"Total Cost: {self.game.total_cost}")
         self.label_cost.pack()
@@ -244,7 +244,11 @@ class MazeGameUI:
             print("No solution")
 
     def astar(self):
-        print("a*")
+        solution_path=self.game.a_star()
+        if solution_path:
+            self.simulate_solution(solution_path)
+        else:
+            print("No solution")
 
     def simulate_solution(self, solution_path):
    
