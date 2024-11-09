@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import messagebox
+
 from PIL import Image, ImageTk
 import itertools
 from game import MazeGame
@@ -20,6 +22,7 @@ class MazeGameUI:
         self.cell_size = 50
         self.level = '01'
         self.animation_speed = 100  # Default speed for idle animation
+        self.congrats_label = None
 
         self.images = {
             '#': self.load_image("asset/Items/Boxes/Box3/Idle.png"),
@@ -90,8 +93,13 @@ class MazeGameUI:
         btn_reset.pack(side="left", padx=10, pady=5)
         btn_output.pack(side="left", padx=10, pady=5)
 
+    def clear_congratulations(self):
+        if self.congrats_label:
+            self.congrats_label.destroy()  # Remove congratulations message if it exists
+            self.congrats_label = None
     def load_selected_level(self, level_options):
         # Get the chosen level's filename from the level_options dictionary
+        self.clear_congratulations()
         selected_level = self.level_var.get()
         if selected_level in level_options:
             filename = level_options[selected_level]
@@ -120,6 +128,7 @@ class MazeGameUI:
         self.reset_animation()
 
         self.draw_grid()
+        self.clear_congratulations()
 
     def show_hint(self):
         # Code to provide a hint to the user
@@ -193,8 +202,9 @@ class MazeGameUI:
 
     def show_congratulations(self):
         print("Congratulations! You completed the challenge!")
-        congrats = tk.Label(self.root, text="Congratulations! You completed the challenge!")
-        congrats.pack()
+        self.congrats_label = tk.Label(self.root, text="Congratulations! You completed the challenge!")
+        self.congrats_label.pack()
+
 
     def increase_speed_and_load_new_animation(self):
         self.animation_speed = 40  # Increase speed after reaching goal
@@ -219,37 +229,22 @@ class MazeGameUI:
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
 
     def dfs(self):
-        result = self.game.dfs()
-        solution_path = result.get("solution_path")
+        solution_path = self.game.dfs()
         if solution_path:
             self.simulate_solution(solution_path)
-            steps = result["steps"]
-            nodes_generated = result["nodes_generated"]
-            cost = result["cost"]
-            time_ms = result["time_ms"]
-            memory_mb = result["memory_mb"]
-            self.write_output("DFS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
-            print("DFS: No solution")
+            print("No solution")
 
     def bfs(self):
-        result = self.game.bfs()
-        print("BFS result:", result)  # Debugging: Check the output of BFS
-        solution_path = result.get("solution_path")
+        solution_path = self.game.bfs()
         if solution_path:
             self.simulate_solution(solution_path)
-            steps = result["steps"]
-            nodes_generated = result["nodes_generated"]
-            cost = result["cost"]
-            time_ms = result["time_ms"]
-            memory_mb = result["memory_mb"]
-            self.write_output("BFS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
-            print("BFS: No solution")
+            print("No solution")
 
     def ucs(self):
         result = self.game.ucs()
-        solution_path = result.get("solution_path")
+        solution_path = result["solution_path"]
         if solution_path:
             self.simulate_solution(solution_path)
             steps = result["steps"]
@@ -257,23 +252,38 @@ class MazeGameUI:
             cost = result["cost"]
             time_ms = result["time_ms"]
             memory_mb = result["memory_mb"]
-            self.write_output("UCS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
             print("No solution")
 
     def astar(self):
-        result = self.game.a_star()
-        solution_path = result.get("solution_path")
+        solution_path = self.game.a_star()
         if solution_path:
             self.simulate_solution(solution_path)
-            steps = result["steps"]
-            nodes_generated = result["nodes_generated"]
-            cost = result["cost"]
-            time_ms = result["time_ms"]
-            memory_mb = result["memory_mb"]
-            self.write_output("A*", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
-            print("A*: No solution")
+            print("No solution")
+
+    def simulate_solution(self, solution_path):
+
+        if not solution_path:
+            print("No solution path provided.")
+            return
+
+        def step(index):
+            if index < len(solution_path):
+                # Mapping the direction and making the move
+                direction_map = {
+                    'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1),
+                    'u': (-1, 0), 'd': (1, 0), 'l': (0, -1), 'r': (0, 1)
+                }
+                move_dir = solution_path[index]
+                dr, dc = direction_map[move_dir]
+                self.move((dr, dc))  # Move within the UI
+
+            # Schedule the next step with a delay
+            self.root.after(100, step, index + 1)
+
+        # Start the first step
+        step(0)
 
     def simulate_solution(self, solution_path):
    
@@ -307,42 +317,30 @@ class MazeGameUI:
         file.write(f"Steps: {steps}, Cost: {cost}, Nodes: {nodes_generated}, "
                    f"Time (ms): {time_ms:.2f}, Memory (MB): {memory_mb:.2f}\n")
         file.write(solution_string + "\n\n")
-
     def generate_all_outputs(self):
-        # Dictionary of algorithms to run
-        algorithms = {
-            "BFS": self.game.bfs,
-            "UCS": self.game.ucs,
-            "A*": self.game.a_star,
-            "DFS": self.game.dfs
-        }
-
-        # Open the output file for all algorithms
-        output_filename = f"outputUCS-{self.level}.txt"
+        output_filename = f"output-{self.level}.txt"
         with open(output_filename, 'w') as f:
-            # Loop through each algorithm, run it, and write its output
-            for algorithm_name, algorithm_function in algorithms.items():
+            # Run each algorithm and write its output
+            for algorithm_name, algorithm_function in {
+                "BFS": self.game.bfs,
+                "UCS": self.game.ucs,
+                "A*": self.game.a_star,
+                "DFS": self.game.dfs
+            }.items():
                 result = algorithm_function()
-
                 if result and "solution_path" in result:
-                    solution_path = result["solution_path"]
-                    steps = result.get("steps", len(solution_path))
-                    cost = result.get("cost", 0)
-                    nodes_generated = result.get("nodes_generated", 0)
-                    time_ms = result.get("time_ms", 0.0)
-                    memory_mb = result.get("memory_mb", 0.0)
-
-                    # Write results to the file
                     self.write_output(
                         file=f,
                         algorithm_name=algorithm_name,
-                        solution_path=solution_path,
-                        steps=steps,
-                        cost=cost,
-                        nodes_generated=nodes_generated,
-                        time_ms=time_ms,
-                        memory_mb=memory_mb
+                        solution_path=result["solution_path"],
+                        steps=result["steps"],
+                        cost=result["cost"],
+                        nodes_generated=result["nodes_generated"],
+                        time_ms=result["time_ms"],
+                        memory_mb=result["memory_mb"]
                     )
                 else:
-                    # Write a message if there is no solution found
                     f.write(f"{algorithm_name}\nNo solution\n\n")
+
+        # Display a success message after saving the file
+        messagebox.showinfo("Output Saved", "All outputs have been successfully saved.")
