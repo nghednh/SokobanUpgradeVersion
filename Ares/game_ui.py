@@ -229,22 +229,9 @@ class MazeGameUI:
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
 
     def dfs(self):
-        solution_path = self.game.dfs()
-        if solution_path:
-            self.simulate_solution(solution_path)
-        else:
-            print("No solution")
-
-    def bfs(self):
-        solution_path = self.game.bfs()
-        if solution_path:
-            self.simulate_solution(solution_path)
-        else:
-            print("No solution")
-
-    def ucs(self):
-        result = self.game.ucs()
-        solution_path = result["solution_path"]
+        self.reset_game()
+        result = self.game.dfs()
+        solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
             steps = result["steps"]
@@ -252,38 +239,55 @@ class MazeGameUI:
             cost = result["cost"]
             time_ms = result["time_ms"]
             memory_mb = result["memory_mb"]
+            #self.write_output("DFS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
+        else:
+            print("DFS: No solution")
+
+    def bfs(self):
+        self.reset_game()
+        result = self.game.bfs()
+        print("BFS result:", result)  # Debugging: Check the output of BFS
+        solution_path = result.get("solution_path")
+        if solution_path:
+            self.simulate_solution(solution_path)
+            steps = result["steps"]
+            nodes_generated = result["nodes_generated"]
+            cost = result["cost"]
+            time_ms = result["time_ms"]
+            memory_mb = result["memory_mb"]
+            #self.write_output("BFS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
+        else:
+            print("BFS: No solution")
+
+    def ucs(self):
+        self.reset_game()
+        result = self.game.ucs()
+        solution_path = result.get("solution_path")
+        if solution_path:
+            self.simulate_solution(solution_path)
+            steps = result["steps"]
+            nodes_generated = result["nodes_generated"]
+            cost = result["cost"]
+            time_ms = result["time_ms"]
+            memory_mb = result["memory_mb"]
+            #self.write_output("UCS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
             print("No solution")
 
     def astar(self):
-        solution_path = self.game.a_star()
+        self.reset_game()
+        result = self.game.a_star()
+        solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
+            steps = result["steps"]
+            nodes_generated = result["nodes_generated"]
+            cost = result["cost"]
+            time_ms = result["time_ms"]
+            memory_mb = result["memory_mb"]
+            #self.write_output("A*", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
-            print("No solution")
-
-    def simulate_solution(self, solution_path):
-
-        if not solution_path:
-            print("No solution path provided.")
-            return
-
-        def step(index):
-            if index < len(solution_path):
-                # Mapping the direction and making the move
-                direction_map = {
-                    'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1),
-                    'u': (-1, 0), 'd': (1, 0), 'l': (0, -1), 'r': (0, 1)
-                }
-                move_dir = solution_path[index]
-                dr, dc = direction_map[move_dir]
-                self.move((dr, dc))  # Move within the UI
-
-            # Schedule the next step with a delay
-            self.root.after(100, step, index + 1)
-
-        # Start the first step
-        step(0)
+            print("A*: No solution")
 
     def simulate_solution(self, solution_path):
    
