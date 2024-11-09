@@ -12,13 +12,16 @@ class MazeGameUI:
         self.root.title("Ares's Adventure")
 
         self.game = MazeGame(grid,stone_weights)
-        self.grid_frame = tk.Canvas(root, width=1600, height=800, bg="white")
+        self.grid_frame = tk.Canvas(root, width=1500, height=600, bg="white")
         self.grid_frame.pack()
         self.label_cost = tk.Label(root, text=f"Total Cost: {self.game.total_cost}")
         self.label_cost.pack()
         self.goal_reached=False
-        self.cell_size = 50
-        self.level = 2 
+        self.cell_size = 50 
+        self.level = 0
+        match = re.search(r'\d+',"input-01.txt")
+        if match:
+            self.level = match.group()
         self.animation_speed = 100  # Default speed for idle animation
 
         self.images = {
