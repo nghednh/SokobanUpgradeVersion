@@ -4,6 +4,8 @@ import itertools
 from game import MazeGame
 import time
 from utils import parse_input
+import re
+import tracemalloc
 class MazeGameUI:
     def __init__(self, root,grid, stone_weights):
         self.root = root
@@ -16,6 +18,7 @@ class MazeGameUI:
         self.label_cost.pack()
         self.goal_reached=False
         self.cell_size = 50
+        self.level = 2 
         self.animation_speed = 100  # Default speed for idle animation
 
         self.images = {
@@ -94,6 +97,9 @@ class MazeGameUI:
             self.goal_reached = False  # Reset goal state          
             self.game = None  # Remove the current game instance
             gird, stone_weights = parse_input(filename)
+            match = re.search(r'\d+',filename)
+            if match:
+                self.level = match.group()
             self.game = MazeGame(gird, stone_weights)
             self.reset_animation()
             self.draw_grid()
@@ -198,6 +204,7 @@ class MazeGameUI:
         # Update frame iterators to cycle through the new animations
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
+
     def reset_animation(self):
         self.animation_speed = 100  
         self.ares_idle_animation = self.load_animation("asset/Main Characters/Mask Dude/Idle (32x32).png", 11)
@@ -207,6 +214,7 @@ class MazeGameUI:
         # Frame iterators for each animation
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
+        
     def dfs(self):
         solution_path=self.game.dfs()
         if solution_path:
@@ -222,9 +230,16 @@ class MazeGameUI:
             print("No solution")
 
     def ucs(self):
-        solution_path=self.game.bfs()
+        result=self.game.ucs()
+        solution_path = result["solution_path"]
         if solution_path:
             self.simulate_solution(solution_path)
+            steps = result["steps"]
+            nodes_generated = result["nodes_generated"]
+            cost = result["cost"]
+            time_ms = result["time_ms"]
+            memory_mb = result["memory_mb"]
+            self.write_output("UCS", solution_path, steps, cost, nodes_generated,time_ms,memory_mb)
         else:
             print("No solution")
 
@@ -244,7 +259,10 @@ class MazeGameUI:
         def step(index):
             if index < len(solution_path):
             # Mapping the direction and making the move
-                direction_map = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1)}
+                direction_map = {
+                'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1),
+                'u': (-1, 0), 'd': (1, 0), 'l': (0, -1), 'r': (0, 1)
+                }
                 move_dir = solution_path[index]
                 dr, dc = direction_map[move_dir]
                 self.move((dr, dc))  # Move within the UI
@@ -254,4 +272,18 @@ class MazeGameUI:
 
         # Start the first step
         step(0)
+        
+    def write_output(self,algorithm_name,solution_path, steps, cost, nodes_generated,time_ms,memory_mb):
+    
+        # Prepare the output file path
+        output_filename = f"output-{self.level}.txt"
 
+        # Prepare solution details for output
+        solution_string = ''.join(solution_path)  
+
+        # Write to output file
+        with open(output_filename, 'w') as f:
+            f.write(f"{algorithm_name}\n")
+            f.write(f"Steps: {steps}, Cost: {cost}, Node: {nodes_generated}, "
+                    f"Time (ms): {time_ms:.2f}, Memory (MB): {memory_mb:.2f}\n")
+            f.write(solution_string)

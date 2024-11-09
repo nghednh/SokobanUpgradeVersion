@@ -1,6 +1,8 @@
 import time
 from collections import deque
 import heapq
+import tracemalloc
+import itertools
 
 class PriorityQueueNode:
     def __init__(self, estimated_total_cost, cost, game, path):
@@ -156,7 +158,8 @@ class MazeGame:
     def getSuccessors(self):
         successors = []
         directions = [(-1, 0, 'U'), (1, 0, 'D'), (0, -1, 'L'), (0, 1, 'R')]
-        
+        stone_positions = {(stone[0], stone[1]) for stone in self.stone_pos}
+
         for dr, dc, move_dir in directions:
             if self.can_move(dr, dc):  # Check if Ares can move in this direction
                 # Clone grid and move Ares to generate a successor state
@@ -165,7 +168,11 @@ class MazeGame:
                 new_game.ares_pos = self.ares_pos  # Start from current Ares's position
                 new_game.stone_pos = list(self.stone_pos)  # Start from current stone positions
                 new_game.total_cost = self.total_cost  # Start from current cost
-                
+                target_r, target_c = self.ares_pos[0] + dr, self.ares_pos[1] + dc
+                if (target_r, target_c) in stone_positions:
+                    move_dir = move_dir.upper()  # Use lowercase for moves toward stones
+                else:
+                    move_dir = move_dir.lower()  # Use uppercase otherwise
                 # Perform the move
                 if new_game.move((dr, dc)):  # Move in direction (dr, dc)
                     # Capture the state after the move
@@ -317,7 +324,69 @@ class MazeGame:
         print("No solution found.")
         return None
     def ucs(self):
-        print(f"ucs")
 
+        # Counter for tie-breaking
+        counter = itertools.count()
+    
+        frontier = [(0, next(counter), self, [])]  # (cost, count, position, path)
+        # Dictionary to track the minimum cost to reach each state
+        path_cost = {self.get_state(): 0}
+        initial_state = self.get_state()
+        explored = set()
+        explored.add(initial_state)
+
+        # Track memory
+        nodes_generated = 0
+        tracemalloc.start()  
+        start_time = time.time()
+        while frontier:
+            #pop the node with lowest cost 
+            (cost,_,current_position,path) = heapq.heappop(frontier)
+            current_state = current_position.get_state()
+            # If we reach the goal, return the path
+            if current_position.is_goal_state():
+                end_time = time.time()
+                memory_used = tracemalloc.get_traced_memory()[1] / (1024 * 1024)  # Peak memory in MB
+                tracemalloc.stop()
+
+                # Steps are the length of the path taken to reach the goal
+                steps = len(path)
+                total_time = (end_time - start_time) * 1000  # Time in milliseconds
+            
+                # Return all metrics and the solution path
+                return {
+                    "cost": cost,
+                    "steps": steps,
+                    "nodes_generated": nodes_generated,
+                    "time_ms": total_time,
+                    "memory_mb": memory_used,
+                    "solution_path": path
+            }
+
+            for successor_game, move_dir, move_cost in current_position.getSuccessors():   
+                successor_state = successor_game.get_state()
+                nodes_generated += 1
+                if successor_state not in explored or (cost + move_cost) < path_cost[successor_state]:
+                    # add duplicated entry but when node expand this code in explored and has more cost than current cost 
+                    # so it does not affect to algorithm
+                    path_cost[successor_state] = cost + move_cost
+                    new_path = path + [move_dir]
+                    heapq.heappush(frontier, (cost + move_cost, next(counter), successor_game, new_path))
+                    explored.add(successor_state)
+                    print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {cost + move_cost}")
+        print(f"No Solution found.") 
+        tracemalloc.stop()
+        end_time = time.time()
+        total_time = (end_time - start_time) * 1000  # Time in milliseconds
+        memory_used = tracemalloc.get_traced_memory()[1] / (1024 * 1024)  # Peak memory in MB
+               
+        return {
+        "cost": None,
+        "steps": None,
+        "nodes_generated": nodes_generated,
+        "time_ms": total_time,
+        "memory_mb": memory_used,
+        "solution_path": None
+    }
     
 
