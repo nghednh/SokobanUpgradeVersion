@@ -113,7 +113,7 @@ class MazeGameUI:
             self.game = MazeGame(gird, stone_weights)
             self.reset_animation()
             self.draw_grid()
-
+            self.grid_frame.update_idletasks()
         else:
             print("Please select a valid level.")
     # def reset_game(self):
@@ -229,6 +229,7 @@ class MazeGameUI:
 
     def dfs(self):
         self.load_selected_level(self.level_options)
+
         result = self.game.dfs()
         solution_path = result.get("solution_path")
         if solution_path:
@@ -271,7 +272,7 @@ class MazeGameUI:
             print("No solution")
 
     def simulate_solution(self, solution_path):
-   
+
         if not solution_path:
             print("No solution path provided.")
             return
