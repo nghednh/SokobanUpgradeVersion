@@ -64,7 +64,7 @@ class MazeGameUI:
         btn_reset = tk.Button(button_frame,text = "Reset game",command= self.reset_game)
         # Dropdown menu for choosing level
         self.level_var = tk.StringVar(self.root)
-        self.level_var.set("Select Level")  # Default text for the dropdown
+        self.level_var.set("Level 1")  # Default text for the dropdown
 
         # Options for level selection
         level_options = {"Level 1": "input-01.txt", 
@@ -80,6 +80,7 @@ class MazeGameUI:
         self.level_menu = tk.OptionMenu(button_frame, self.level_var, *level_options.keys())
         self.level_menu.pack(side="left", padx=5)
         btn5 = tk.Button(button_frame, text="Load Level", command=lambda: self.load_selected_level(level_options))
+        btn_reset = tk.Button(button_frame, text="Reset game", command=lambda: self.load_selected_level(level_options))
         btn5.pack(side="left", padx=5)
         btn1.pack(side="left", padx=10, pady=5)
         btn2.pack(side="left", padx=10, pady=5)
@@ -107,13 +108,13 @@ class MazeGameUI:
         else:
             print("Please select a valid level.")
     def reset_game(self):
-        # Code to reset the game
+        #Code to reset the game
         print("Game reset!")
         self.grid_frame.delete("all")  # Clear the canvas
         self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
-        self.goal_reached = False  # Reset goal state          
+        self.goal_reached = False  # Reset goal state
         self.game.reset()
-       
+
         self.reset_animation()
 
         self.draw_grid()
