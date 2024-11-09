@@ -68,9 +68,9 @@ class MazeGameUI:
         self.level_var.set("Level 1")  # Default text for the dropdown
 
         # Options for level selection
-        level_options = {"Level 1": "input-03.txt",
+        level_options = {"Level 1": "input-01.txt",
                          "Level 2": "input-02.txt", 
-                         "Level 3": "input-01.txt",
+                         "Level 3": "input-03.txt",
                          "Level 4": "input-04.txt",
                          "Level 5": "input-05.txt",
                          "Level 6": "input-06.txt",
@@ -318,7 +318,7 @@ class MazeGameUI:
         }
 
         # Open the output file for all algorithms
-        output_filename = f"outputfinal-{self.level}.txt"
+        output_filename = f"outputUCS-{self.level}.txt"
         with open(output_filename, 'w') as f:
             # Loop through each algorithm, run it, and write its output
             for algorithm_name, algorithm_function in algorithms.items():
