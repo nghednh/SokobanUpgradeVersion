@@ -14,7 +14,7 @@ class MazeGameUI:
         self.root.title("Ares's Adventure")
 
         self.game = MazeGame(grid,stone_weights)
-        self.grid_frame = tk.Canvas(root, width=1600, height=800, bg="white")
+        self.grid_frame = tk.Canvas(root, width=1400, height=600, bg="white")
         self.grid_frame.pack()
         self.label_cost = tk.Label(root, text=f"Total Cost: {self.game.total_cost}")
         self.label_cost.pack()
