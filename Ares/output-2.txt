@@ -1,0 +1,3 @@
+UCS
+Steps: 4, Cost: 12, Node: 250, Time (ms): 292.95, Memory (MB): 0.08
+drRR
