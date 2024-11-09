@@ -287,9 +287,7 @@ class MazeGame:
             "solution_path": None
         }
 
-    from collections import deque
-    import tracemalloc
-    import time
+
 
     def bfs(self):
         queue = deque([(self, [], 0)])  # start from initial state with an empty path

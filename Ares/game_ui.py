@@ -64,14 +64,13 @@ class MazeGameUI:
         btn2 = tk.Button(button_frame, text="BFS", command=self.bfs)
         btn3 = tk.Button(button_frame, text="UCS", command=self.ucs)
         btn4 = tk.Button(button_frame, text="A*", command=self.astar)
-        btn_reset = tk.Button(button_frame,text = "Reset game",command= self.reset_game)
         btn_output = tk.Button(button_frame, text="Output", command=self.generate_all_outputs)
         # Dropdown menu for choosing level
         self.level_var = tk.StringVar(self.root)
         self.level_var.set("Level 1")  # Default text for the dropdown
 
         # Options for level selection
-        level_options = {"Level 1": "input-01.txt",
+        self.level_options = {"Level 1": "input-01.txt",
                          "Level 2": "input-02.txt", 
                          "Level 3": "input-03.txt",
                          "Level 4": "input-04.txt",
@@ -81,10 +80,10 @@ class MazeGameUI:
                          "Level 8": "input-08.txt",
                          "Level 9": "input-09.txt",
                          "Level 10": "input-10.txt",}
-        self.level_menu = tk.OptionMenu(button_frame, self.level_var, *level_options.keys())
+        self.level_menu = tk.OptionMenu(button_frame, self.level_var, *self.level_options.keys())
         self.level_menu.pack(side="left", padx=5)
-        btn5 = tk.Button(button_frame, text="Load Level", command=lambda: self.load_selected_level(level_options))
-        btn_reset = tk.Button(button_frame, text="Reset game", command=lambda: self.load_selected_level(level_options))
+        btn5 = tk.Button(button_frame, text="Load Level", command=lambda: self.load_selected_level(self.level_options))
+        btn_reset = tk.Button(button_frame, text="Reset game", command=lambda: self.load_selected_level(self.level_options))
         btn5.pack(side="left", padx=5)
         btn1.pack(side="left", padx=10, pady=5)
         btn2.pack(side="left", padx=10, pady=5)
@@ -117,18 +116,18 @@ class MazeGameUI:
 
         else:
             print("Please select a valid level.")
-    def reset_game(self):
-        #Code to reset the game
-        print("Game reset!")
-        self.grid_frame.delete("all")  # Clear the canvas
-        self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
-        self.goal_reached = False  # Reset goal state
-        self.game.reset()
-
-        self.reset_animation()
-
-        self.draw_grid()
-        self.clear_congratulations()
+    # def reset_game(self):
+    #     #Code to reset the game
+    #     print("Game reset!")
+    #     self.grid_frame.delete("all")  # Clear the canvas
+    #     self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
+    #     self.goal_reached = False  # Reset goal state
+    #     self.game.reset()
+    #
+    #     self.reset_animation()
+    #
+    #     self.draw_grid()
+    #     self.clear_congratulations()
 
     def show_hint(self):
         # Code to provide a hint to the user
@@ -229,38 +228,26 @@ class MazeGameUI:
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
 
     def dfs(self):
-        self.reset_game()
+        self.load_selected_level(self.level_options)
         result = self.game.dfs()
         solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
-            steps = result["steps"]
-            nodes_generated = result["nodes_generated"]
-            cost = result["cost"]
-            time_ms = result["time_ms"]
-            memory_mb = result["memory_mb"]
-            #self.write_output("DFS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
-            print("DFS: No solution")
+            print("No solution")
 
     def bfs(self):
-        self.reset_game()
+        self.load_selected_level(self.level_options)
         result = self.game.bfs()
-        print("BFS result:", result)  # Debugging: Check the output of BFS
         solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
-            steps = result["steps"]
-            nodes_generated = result["nodes_generated"]
-            cost = result["cost"]
-            time_ms = result["time_ms"]
-            memory_mb = result["memory_mb"]
-            #self.write_output("BFS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
-            print("BFS: No solution")
+            print("No solution")
+
 
     def ucs(self):
-        self.reset_game()
+        self.load_selected_level(self.level_options)
         result = self.game.ucs()
         solution_path = result.get("solution_path")
         if solution_path:
@@ -275,19 +262,13 @@ class MazeGameUI:
             print("No solution")
 
     def astar(self):
-        self.reset_game()
+        self.load_selected_level(self.level_options)
         result = self.game.a_star()
         solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
-            steps = result["steps"]
-            nodes_generated = result["nodes_generated"]
-            cost = result["cost"]
-            time_ms = result["time_ms"]
-            memory_mb = result["memory_mb"]
-            #self.write_output("A*", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
-            print("A*: No solution")
+            print("No solution")
 
     def simulate_solution(self, solution_path):
    
