@@ -229,7 +229,11 @@ class MazeGameUI:
             print("No solution")
 
     def astar(self):
-        print("a*")
+        solution_path=self.game.a_star()
+        if solution_path:
+            self.simulate_solution(solution_path)
+        else:
+            print("No solution")
 
     def simulate_solution(self, solution_path):
    
