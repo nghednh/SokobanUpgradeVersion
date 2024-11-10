@@ -253,8 +253,8 @@ class MazeGameUI:
         self.load_selected_level(self.level_options)
 
         result = self.game.dfs()
-        solution_path = result.get("solution_path")
-        if solution_path:
+        if result:
+            solution_path = result.get("solution_path")
             self.simulate_solution(solution_path)
         else:
             print("No solution")
@@ -262,8 +262,8 @@ class MazeGameUI:
     def bfs(self):
         self.load_selected_level(self.level_options)
         result = self.game.bfs()
-        solution_path = result.get("solution_path")
-        if solution_path:
+        if result:
+            solution_path = result.get("solution_path")
             self.simulate_solution(solution_path)
         else:
             print("No solution")
@@ -272,8 +272,8 @@ class MazeGameUI:
     def ucs(self):
         self.load_selected_level(self.level_options)
         result = self.game.ucs()
-        solution_path = result.get("solution_path")
-        if solution_path:
+        if result:
+            solution_path = result.get("solution_path")
             self.simulate_solution(solution_path)
             steps = result["steps"]
             nodes_generated = result["nodes_generated"]
@@ -287,8 +287,8 @@ class MazeGameUI:
     def astar(self):
         self.load_selected_level(self.level_options)
         result = self.game.a_star()
-        solution_path = result.get("solution_path")
-        if solution_path:
+        if result:
+            solution_path = result.get("solution_path")
             self.simulate_solution(solution_path)
         else:
             print("No solution")
