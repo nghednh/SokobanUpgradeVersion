@@ -1,0 +1,12 @@
+BFS
+No solution
+
+UCS
+No solution
+
+A*
+No solution
+
+DFS
+No solution
+

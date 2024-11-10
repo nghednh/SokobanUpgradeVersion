@@ -1,0 +1,16 @@
+BFS
+Steps: 3, Cost: 8, Nodes: 16, Time (ms): 1.00, Memory (MB): 0.01
+DuR
+
+UCS
+Steps: 3, Cost: 8, Nodes: 34, Time (ms): 1.00, Memory (MB): 0.01
+DuR
+
+A*
+Steps: 3, Cost: 8, Nodes: 12, Time (ms): 1.00, Memory (MB): 0.01
+DuR
+
+DFS
+Steps: 3, Cost: 8, Nodes: 6, Time (ms): 0.00, Memory (MB): 0.00
+RlD
+
