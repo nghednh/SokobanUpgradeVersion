@@ -1,12 +1,16 @@
 BFS
-No solution
+Steps: None, Cost: None, Nodes: 2880, Time (ms): 123.48, Memory (MB): 0.00
+ 
 
 UCS
-No solution
+Steps: None, Cost: None, Nodes: 2882, Time (ms): 119.56, Memory (MB): 0.00
+ 
 
 A*
-No solution
+Steps: None, Cost: None, Nodes: 927, Time (ms): 126.89, Memory (MB): 0.00
+ 
 
 DFS
-No solution
+Steps: None, Cost: None, Nodes: 2880, Time (ms): 121.10, Memory (MB): 0.00
+ 
 

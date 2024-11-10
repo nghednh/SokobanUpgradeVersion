@@ -259,8 +259,8 @@ class MazeGameUI:
         self.load_selected_level(self.level_options)
 
         result = self.game.dfs()
-        if result:
-            solution_path = result.get("solution_path")
+        solution_path = result.get("solution_path")
+        if solution_path!=None:
             self.simulate_solution(solution_path)
         else:
             self.show_nosolution()
@@ -268,8 +268,8 @@ class MazeGameUI:
     def bfs(self):
         self.load_selected_level(self.level_options)
         result = self.game.bfs()
-        if result:
-            solution_path = result.get("solution_path")
+        solution_path = result.get("solution_path")
+        if solution_path != None:
             self.simulate_solution(solution_path)
         else:
             self.show_nosolution()
@@ -278,8 +278,8 @@ class MazeGameUI:
     def ucs(self):
         self.load_selected_level(self.level_options)
         result = self.game.ucs()
-        if result:
-            solution_path = result.get("solution_path")
+        solution_path = result.get("solution_path")
+        if solution_path != None:
             self.simulate_solution(solution_path)
             steps = result["steps"]
             nodes_generated = result["nodes_generated"]
@@ -293,8 +293,8 @@ class MazeGameUI:
     def astar(self):
         self.load_selected_level(self.level_options)
         result = self.game.a_star()
-        if result:
-            solution_path = result.get("solution_path")
+        solution_path = result.get("solution_path")
+        if solution_path != None:
             self.simulate_solution(solution_path)
         else:
             self.show_nosolution()
@@ -324,7 +324,9 @@ class MazeGameUI:
 
     def write_output(self, file, algorithm_name, solution_path, steps, cost, nodes_generated, time_ms, memory_mb):
         # Prepare solution details for output
-        solution_string = ''.join(solution_path)
+        solution_string = " "
+        if (solution_path):
+            solution_string = ''.join(solution_path)
 
         # Write the results to the provided file
         file.write(f"{algorithm_name}\n")
@@ -342,7 +344,7 @@ class MazeGameUI:
                 "DFS": self.game.dfs
             }.items():
                 result = algorithm_function()
-                if result and "solution_path" in result:
+                if result :
                     self.write_output(
                         file=f,
                         algorithm_name=algorithm_name,
