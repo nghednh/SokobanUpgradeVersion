@@ -397,10 +397,9 @@ class MazeGame:
                 successor_state = successor_game.get_state()
                 nodes_generated += 1
                 if successor_state not in visited:
-<<<<<<< HEAD
-=======
 
->>>>>>> 2e37138133a5c157c8c396cad4494d88055065f9
+
+
                 # Create a new MazeGame instance for the successor state
                     # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
                     # successor_game.ares_pos = successor_state[0]
