@@ -1,8 +1,16 @@
-A*
-Steps: 0, Cost: 0, Nodes: 0, Time (ms): 0.00, Memory (MB): 0.00
+BFS
+Steps: 4, Cost: 10, Nodes: 0, Time (ms): 4.38, Memory (MB): 0.04
+drRR
 
+UCS
+Steps: 4, Cost: 10, Nodes: 207, Time (ms): 11.00, Memory (MB): 0.06
+drRR
+
+A*
+Steps: 4, Cost: 10, Nodes: 37, Time (ms): 4.00, Memory (MB): 0.03
+drRR
 
 DFS
-Steps: 0, Cost: 0, Nodes: 0, Time (ms): 0.00, Memory (MB): 0.00
-
+Steps: 84, Cost: 120, Nodes: 0, Time (ms): 342.99, Memory (MB): 0.83
+rrrdLrrrrddllllllllluurrrurDDldRRRRllllllluurrrrrrrrrddLLdlUUrrrddllllllllluurrrrurR
 

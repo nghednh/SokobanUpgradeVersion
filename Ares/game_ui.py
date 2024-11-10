@@ -14,14 +14,15 @@ class MazeGameUI:
         self.root.title("Ares's Adventure")
 
         self.game = MazeGame(grid,stone_weights)
+        self.cell_size = 50
+        self.grid_frame = tk.Canvas(root, width=self.cell_size * len(self.game.grid[0]), height=self.cell_size * len(self.game.grid))
 
-        self.grid_frame = tk.Canvas(root, width=1500, height=600, bg="white")
 
         self.grid_frame.pack()
         self.label_cost = tk.Label(root, text=f"Total Cost: {self.game.total_cost}")
         self.label_cost.pack()
         self.goal_reached=False
-        self.cell_size = 50 
+
         self.level = 0
         match = re.search(r'\d+',"input-01.txt")
         if match:
@@ -102,6 +103,7 @@ class MazeGameUI:
         if self.congrats_label:
             self.congrats_label.destroy()  # Remove congratulations message if it exists
             self.congrats_label = None
+
     def load_selected_level(self, level_options):
         # Get the chosen level's filename from the level_options dictionary
         self.clear_congratulations()
@@ -112,16 +114,30 @@ class MazeGameUI:
             self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
             self.goal_reached = False  # Reset goal state          
             self.game = None  # Remove the current game instance
-            gird, stone_weights = parse_input(filename)
-            match = re.search(r'\d+',filename)
+            grid, stone_weights = parse_input(filename)
+            match = re.search(r'\d+', filename)
             if match:
                 self.level = match.group()
-            self.game = MazeGame(gird, stone_weights)
+            self.game = MazeGame(grid, stone_weights)
+
             self.reset_animation()
             self.draw_grid()
             self.grid_frame.update_idletasks()
+
+            # Resize grid to fit the new game
+            self.resize_grid()
         else:
             print("Please select a valid level.")
+
+    def resize_grid(self):
+        # Resize the grid according to the new grid dimensions (you can customize the logic)
+        grid_width = len(self.game.grid[0])  # Assume the grid is a list of lists
+        grid_height = len(self.game.grid)
+
+        # Adjust the size of the canvas/grid_frame based on the grid dimensions
+        self.grid_frame.config(width=grid_width * self.cell_size, height=grid_height * self.cell_size)
+        self.grid_frame.update_idletasks()
+
     # def reset_game(self):
     #     #Code to reset the game
     #     print("Game reset!")
