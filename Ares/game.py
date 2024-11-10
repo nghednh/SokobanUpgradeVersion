@@ -319,6 +319,7 @@ class MazeGame:
             # Generate successors from the current state
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
                 successor_state = successor_game.get_state()
+                nodes_generated += 1
                 if successor_state not in visited:
 
                     if successor_state not in queue:
@@ -389,6 +390,7 @@ class MazeGame:
             # Generate successors from the current state
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
                 successor_state = successor_game.get_state()
+                nodes_generated += 1
                 if successor_state not in visited:
 
                     if successor_state not in stack:
