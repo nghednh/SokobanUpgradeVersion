@@ -86,7 +86,8 @@ class MazeGameUI:
                          "Level 7": "input-07.txt",
                          "Level 8": "input-08.txt",
                          "Level 9": "input-09.txt",
-                         "Level 10": "input-10.txt",}
+                         "Level 10": "input-10.txt",
+                         "Level 11": "input-11.txt",}
         self.level_menu = tk.OptionMenu(button_frame, self.level_var, *self.level_options.keys())
         self.level_menu.pack(side="left", padx=5)
         btn5 = tk.Button(button_frame, text="Load Level", command=lambda: self.load_selected_level(self.level_options))
