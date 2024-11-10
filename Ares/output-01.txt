@@ -12,5 +12,6 @@ drRR
 
 DFS
 Steps: 84, Cost: 120, Nodes: 6802, Time (ms): 341.93, Memory (MB): 0.83
+
 rrrdLrrrrddllllllllluurrrurDDldRRRRllllllluurrrrrrrrrddLLdlUUrrrddllllllllluurrrrurR
 
