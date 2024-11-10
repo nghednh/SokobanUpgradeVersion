@@ -274,17 +274,18 @@ class MazeGame:
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
                 successor_state = successor_game.get_state()
                 if successor_state not in visited:
-                # Create a new MazeGame instance for the successor state
-                    # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
-                    # successor_game.ares_pos = successor_state[0]
-                    # successor_game.stone_pos = list(successor_state[1])
-                    # successor_game.total_cost = current_game.total_cost + move_cost
+                    if successor_state not in queue:
+                        # Create a new MazeGame instance for the successor state
+                        # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
+                        # successor_game.ares_pos = successor_state[0]
+                        # successor_game.stone_pos = list(successor_state[1])
+                        # successor_game.total_cost = current_game.total_cost + move_cost
 
-                # Mark as visited and enqueue for further exploration
-                    visited.add(successor_state)
-                    new_path = path + [move_dir]
-                    queue.append((successor_game, new_path, total_cost + move_cost))
-                    #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
+                        # Mark as visited and enqueue for further exploration
+                        visited.add(successor_state)
+                        new_path = path + [move_dir]
+                        queue.append((successor_game, new_path, total_cost + move_cost))
+                        #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
 
         print("No solution found.")
         return None
@@ -309,6 +310,7 @@ class MazeGame:
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
                 successor_state = successor_game.get_state()
                 if successor_state not in visited:
+                    if successor_state not in stack:
                 # Create a new MazeGame instance for the successor state
                     # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
                     # successor_game.ares_pos = successor_state[0]
@@ -316,10 +318,10 @@ class MazeGame:
                     # successor_game.total_cost = current_game.total_cost + move_cost
 
                 # Mark as visited and enqueue for further exploration
-                    visited.add(successor_state)
-                    new_path = path + [move_dir]
-                    stack.append((successor_game, new_path, total_cost + move_cost))
-                    #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
+                        visited.add(successor_state)
+                        new_path = path + [move_dir]
+                        stack.append((successor_game, new_path, total_cost + move_cost))
+                        #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
 
         print("No solution found.")
         return None
