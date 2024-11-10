@@ -1,4 +1,5 @@
 BFS
+
 Steps: 4, Cost: 10, Nodes: 0, Time (ms): 4.38, Memory (MB): 0.04
 drRR
 
@@ -12,5 +13,6 @@ drRR
 
 DFS
 Steps: 84, Cost: 120, Nodes: 0, Time (ms): 342.99, Memory (MB): 0.83
+
 rrrdLrrrrddllllllllluurrrurDDldRRRRllllllluurrrrrrrrrddLLdlUUrrrddllllllllluurrrrurR
 

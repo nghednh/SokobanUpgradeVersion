@@ -1,3 +1,0 @@
-UCS
-Steps: 3, Cost: 10, Node: 34, Time (ms): 25.09, Memory (MB): 0.02
-DuR
