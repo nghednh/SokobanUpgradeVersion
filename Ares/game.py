@@ -32,14 +32,14 @@ class MazeGame:
         return abs(x[0]-y[0])+abs(x[1]-y[1])
     
     def heuristic(self,state):
-        print("Why do gods just eat one of our button?")
-        print(state[1])
-        print(self.button_pos)
-        print(self.stone_weights)
+        # print("Why do gods just eat one of our button?")
+        # print(state[1])
+        # print(self.button_pos)
+        # print(self.stone_weights)
         hValue=0
         for idx in range(len(self.stone_pos)):
             hValue = hValue + self.dist((state[1][idx][0],state[1][idx][1]),self.button_pos[idx])*self.stone_weights[idx]
-        print(hValue)
+        # print(hValue)
         return hValue
 
     def find_stone_pos(self):
@@ -59,9 +59,8 @@ class MazeGame:
             #print(self.grid[r])
             for c in range(self.cols):
                 #print(self.grid[r][c])
-                if self.grid[r][c]=='.' or self.grid[r][c]=='*' or self.grid[r][c]=='+': 
+                if self.grid[r][c]=='.' or self.grid[r][c]=='*' or self.grid[r][c]=='+':
                     buttonPos.append((r,c))
-        # print(buttonPos)
         return buttonPos
 
     def find_ares_position(self):
@@ -116,14 +115,14 @@ class MazeGame:
             self.grid[sr][sc] = '*' if self.grid[sr][sc] == '.' else '$'
             self.grid[nr][nc] = ' ' if self.grid[nr][nc] == '$' else '.'
             self.moveStone((nr,nc),(sr,sc))
-            self.total_cost += 1 + stone_weight
+            self.total_cost +=stone_weight
 
         self.grid[ar][ac] = ' ' if self.grid[ar][ac] == '@' else '.'
         self.grid[nr][nc] = '@' if self.grid[nr][nc] == ' ' else '+'
         self.ares_pos = (nr, nc)
         self.total_cost += 1
 
-        self.print_grid()
+        # self.print_grid()
         return True
 
     def get_stone_index(self, position):
@@ -139,14 +138,6 @@ class MazeGame:
                     stone_count += 1
         return None
 
-    def print_grid(self):
-        for row in self.grid:
-            #print(''.join(row))
-        # print(f"Total Cost: {self.total_cost}")
-        # print(f"Ares Position: {self.ares_pos}")
-        # print(f"Switches: {self.switches}")
-        # print(self.stone_pos)
-            print(f"")
     def reset(self):
         print(f"reset is valiable")
 
@@ -235,8 +226,8 @@ class MazeGame:
             path = node.path
             current_state = current_game.get_state()
 
-            print(
-                f"Exploring state: {current_state}, Path: {path}, Cost: {current_cost}, Estimated Total Cost: {estimated_cost}")
+            # print(
+            #     f"Exploring state: {current_state}, Path: {path}, Cost: {current_cost}, Estimated Total Cost: {estimated_cost}")
 
             # Check if the current state is a goal state
             if current_game.is_goal_state():
@@ -276,7 +267,8 @@ class MazeGame:
 
                     nodes_generated += 1
 
-        print("No solution found.")
+        # print("No solution found.")
+
         tracemalloc.stop()
         return {
             "cost": None,
@@ -373,7 +365,7 @@ class MazeGame:
             (current_game, path, total_cost) = stack.pop()
             current_state = current_game.get_state()
 
-            print(f"Exploring state: {current_state}, Path: {path}, Total cost: {total_cost}")
+            # print(f"Exploring state: {current_state}, Path: {path}, Total cost: {total_cost}")
 
             # Check if current state is a goal state
             if current_game.is_goal_state():
@@ -398,6 +390,7 @@ class MazeGame:
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
                 successor_state = successor_game.get_state()
                 if successor_state not in visited:
+
                     if successor_state not in stack:
                 # Create a new MazeGame instance for the successor state
                     # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
@@ -434,7 +427,7 @@ class MazeGame:
         initial_state = self.get_state()
         explored = set()
         explored.add(initial_state)
-
+        print(f"Initial state: {initial_state}")
         # Track memory
         nodes_generated = 0
         tracemalloc.start()  
