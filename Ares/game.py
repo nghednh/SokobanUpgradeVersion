@@ -36,9 +36,15 @@ class MazeGame:
         # print(state[1])
         # print(self.button_pos)
         # print(self.stone_weights)
-        hValue=0
+        mweight = 0
         for idx in range(len(self.stone_pos)):
-            hValue = hValue + self.dist((state[1][idx][0],state[1][idx][1]),self.button_pos[idx])*self.stone_weights[idx]
+            mweight = max(mweight,self.stone_weights[idx])
+        hValue = 0
+        for id in range(len(state[1])):
+            mValue = self.cols*self.rows*mweight
+            for idx in range(len(self.stone_pos)):
+                mValue = min(mValue,self.dist((state[1][id][0],state[1][id][1]),self.button_pos[idx])*self.stone_weights[idx])
+            hValue = hValue + mValue
         # print(hValue)
         return hValue
 
