@@ -1,16 +1,16 @@
 BFS
-Steps: 4, Cost: 10, Nodes: 78, Time (ms): 5.00, Memory (MB): 0.04
+Steps: 4, Cost: 10, Nodes: 78, Time (ms): 12.95, Memory (MB): 0.04
 drRR
 
 UCS
-Steps: 4, Cost: 10, Nodes: 207, Time (ms): 11.62, Memory (MB): 0.06
+Steps: 4, Cost: 10, Nodes: 207, Time (ms): 31.92, Memory (MB): 0.06
 drRR
 
 A*
-Steps: 4, Cost: 10, Nodes: 37, Time (ms): 4.24, Memory (MB): 0.03
+Steps: 4, Cost: 10, Nodes: 37, Time (ms): 17.03, Memory (MB): 0.03
 drRR
 
 DFS
-Steps: 84, Cost: 120, Nodes: 6802, Time (ms): 349.66, Memory (MB): 0.83
+Steps: 84, Cost: 120, Nodes: 6802, Time (ms): 1088.19, Memory (MB): 0.82
 rrrdLrrrrddllllllllluurrrurDDldRRRRllllllluurrrrrrrrrddLLdlUUrrrddllllllllluurrrrurR
 
