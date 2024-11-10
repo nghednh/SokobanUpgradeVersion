@@ -1,0 +1,16 @@
+BFS
+Steps: 4, Cost: 10, Nodes: 101, Time (ms): 10.02, Memory (MB): 0.04
+rrRR
+
+UCS
+Steps: 4, Cost: 10, Nodes: 264, Time (ms): 19.97, Memory (MB): 0.13
+rrRR
+
+A*
+Steps: 4, Cost: 10, Nodes: 57, Time (ms): 8.22, Memory (MB): 0.03
+rrRR
+
+DFS
+Steps: 4, Cost: 10, Nodes: 15, Time (ms): 1.51, Memory (MB): 0.02
+rrRR
+
