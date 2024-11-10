@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import messagebox
+
 from PIL import Image, ImageTk
 import itertools
 from game import MazeGame
@@ -12,7 +14,9 @@ class MazeGameUI:
         self.root.title("Ares's Adventure")
 
         self.game = MazeGame(grid,stone_weights)
+
         self.grid_frame = tk.Canvas(root, width=1500, height=600, bg="white")
+
         self.grid_frame.pack()
         self.label_cost = tk.Label(root, text=f"Total Cost: {self.game.total_cost}")
         self.label_cost.pack()
@@ -22,7 +26,9 @@ class MazeGameUI:
         match = re.search(r'\d+',"input-01.txt")
         if match:
             self.level = match.group()
+
         self.animation_speed = 100  # Default speed for idle animation
+        self.congrats_label = None
 
         self.images = {
             '#': self.load_image("asset/Items/Boxes/Box3/Idle.png"),
@@ -64,13 +70,13 @@ class MazeGameUI:
         btn2 = tk.Button(button_frame, text="BFS", command=self.bfs)
         btn3 = tk.Button(button_frame, text="UCS", command=self.ucs)
         btn4 = tk.Button(button_frame, text="A*", command=self.astar)
-        btn_reset = tk.Button(button_frame,text = "Reset game",command= self.reset_game)
+        btn_output = tk.Button(button_frame, text="Output", command=self.generate_all_outputs)
         # Dropdown menu for choosing level
         self.level_var = tk.StringVar(self.root)
-        self.level_var.set("Select Level")  # Default text for the dropdown
+        self.level_var.set("Level 1")  # Default text for the dropdown
 
         # Options for level selection
-        level_options = {"Level 1": "input-01.txt", 
+        self.level_options = {"Level 1": "input-01.txt",
                          "Level 2": "input-02.txt", 
                          "Level 3": "input-03.txt",
                          "Level 4": "input-04.txt",
@@ -80,18 +86,25 @@ class MazeGameUI:
                          "Level 8": "input-08.txt",
                          "Level 9": "input-09.txt",
                          "Level 10": "input-10.txt",}
-        self.level_menu = tk.OptionMenu(button_frame, self.level_var, *level_options.keys())
+        self.level_menu = tk.OptionMenu(button_frame, self.level_var, *self.level_options.keys())
         self.level_menu.pack(side="left", padx=5)
-        btn5 = tk.Button(button_frame, text="Load Level", command=lambda: self.load_selected_level(level_options))
+        btn5 = tk.Button(button_frame, text="Load Level", command=lambda: self.load_selected_level(self.level_options))
+        btn_reset = tk.Button(button_frame, text="Reset game", command=lambda: self.load_selected_level(self.level_options))
         btn5.pack(side="left", padx=5)
         btn1.pack(side="left", padx=10, pady=5)
         btn2.pack(side="left", padx=10, pady=5)
         btn3.pack(side="left", padx=10, pady=5)
         btn4.pack(side="left", padx=10, pady=5)
         btn_reset.pack(side="left", padx=10, pady=5)
+        btn_output.pack(side="left", padx=10, pady=5)
 
+    def clear_congratulations(self):
+        if self.congrats_label:
+            self.congrats_label.destroy()  # Remove congratulations message if it exists
+            self.congrats_label = None
     def load_selected_level(self, level_options):
         # Get the chosen level's filename from the level_options dictionary
+        self.clear_congratulations()
         selected_level = self.level_var.get()
         if selected_level in level_options:
             filename = level_options[selected_level]
@@ -106,20 +119,21 @@ class MazeGameUI:
             self.game = MazeGame(gird, stone_weights)
             self.reset_animation()
             self.draw_grid()
-
+            self.grid_frame.update_idletasks()
         else:
             print("Please select a valid level.")
-    def reset_game(self):
-        # Code to reset the game
-        print("Game reset!")
-        self.grid_frame.delete("all")  # Clear the canvas
-        self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
-        self.goal_reached = False  # Reset goal state          
-        self.game.reset()
-       
-        self.reset_animation()
-
-        self.draw_grid()
+    # def reset_game(self):
+    #     #Code to reset the game
+    #     print("Game reset!")
+    #     self.grid_frame.delete("all")  # Clear the canvas
+    #     self.label_cost.config(text="Total Cost: 0")  # Reset the cost label
+    #     self.goal_reached = False  # Reset goal state
+    #     self.game.reset()
+    #
+    #     self.reset_animation()
+    #
+    #     self.draw_grid()
+    #     self.clear_congratulations()
 
     def show_hint(self):
         # Code to provide a hint to the user
@@ -193,8 +207,9 @@ class MazeGameUI:
 
     def show_congratulations(self):
         print("Congratulations! You completed the challenge!")
-        congrats = tk.Label(self.root, text="Congratulations! You completed the challenge!")
-        congrats.pack()
+        self.congrats_label = tk.Label(self.root, text="Congratulations! You completed the challenge!")
+        self.congrats_label.pack()
+
 
     def increase_speed_and_load_new_animation(self):
         self.animation_speed = 40  # Increase speed after reaching goal
@@ -217,24 +232,31 @@ class MazeGameUI:
         # Frame iterators for each animation
         self.ares_idle_frames = itertools.cycle(self.ares_idle_animation)
         self.ares_double_jump_frames = itertools.cycle(self.ares_double_jump_animation)
-        
+
     def dfs(self):
-        solution_path=self.game.dfs()
-        if solution_path:
-            self.simulate_solution(solution_path)
-        else:
-            print("No solution")
-        
-    def bfs(self):
-        solution_path=self.game.bfs()
+        self.load_selected_level(self.level_options)
+
+        result = self.game.dfs()
+        solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
         else:
             print("No solution")
 
+    def bfs(self):
+        self.load_selected_level(self.level_options)
+        result = self.game.bfs()
+        solution_path = result.get("solution_path")
+        if solution_path:
+            self.simulate_solution(solution_path)
+        else:
+            print("No solution")
+
+
     def ucs(self):
-        result=self.game.ucs()
-        solution_path = result["solution_path"]
+        self.load_selected_level(self.level_options)
+        result = self.game.ucs()
+        solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
             steps = result["steps"]
@@ -242,19 +264,21 @@ class MazeGameUI:
             cost = result["cost"]
             time_ms = result["time_ms"]
             memory_mb = result["memory_mb"]
-            self.write_output("UCS", solution_path, steps, cost, nodes_generated,time_ms,memory_mb)
+            #self.write_output("UCS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
             print("No solution")
 
     def astar(self):
-        solution_path=self.game.a_star()
+        self.load_selected_level(self.level_options)
+        result = self.game.a_star()
+        solution_path = result.get("solution_path")
         if solution_path:
             self.simulate_solution(solution_path)
         else:
             print("No solution")
 
     def simulate_solution(self, solution_path):
-   
+
         if not solution_path:
             print("No solution path provided.")
             return
@@ -275,18 +299,40 @@ class MazeGameUI:
 
         # Start the first step
         step(0)
-        
-    def write_output(self,algorithm_name,solution_path, steps, cost, nodes_generated,time_ms,memory_mb):
-    
-        # Prepare the output file path
-        output_filename = f"output-{self.level}.txt"
 
+    def write_output(self, file, algorithm_name, solution_path, steps, cost, nodes_generated, time_ms, memory_mb):
         # Prepare solution details for output
-        solution_string = ''.join(solution_path)  
+        solution_string = ''.join(solution_path)
 
-        # Write to output file
+        # Write the results to the provided file
+        file.write(f"{algorithm_name}\n")
+        file.write(f"Steps: {steps}, Cost: {cost}, Nodes: {nodes_generated}, "
+                   f"Time (ms): {time_ms:.2f}, Memory (MB): {memory_mb:.2f}\n")
+        file.write(solution_string + "\n\n")
+    def generate_all_outputs(self):
+        output_filename = f"output-{self.level}.txt"
         with open(output_filename, 'w') as f:
-            f.write(f"{algorithm_name}\n")
-            f.write(f"Steps: {steps}, Cost: {cost}, Node: {nodes_generated}, "
-                    f"Time (ms): {time_ms:.2f}, Memory (MB): {memory_mb:.2f}\n")
-            f.write(solution_string)
+            # Run each algorithm and write its output
+            for algorithm_name, algorithm_function in {
+                "BFS": self.game.bfs,
+                "UCS": self.game.ucs,
+                "A*": self.game.a_star,
+                "DFS": self.game.dfs
+            }.items():
+                result = algorithm_function()
+                if result and "solution_path" in result:
+                    self.write_output(
+                        file=f,
+                        algorithm_name=algorithm_name,
+                        solution_path=result["solution_path"],
+                        steps=result["steps"],
+                        cost=result["cost"],
+                        nodes_generated=result["nodes_generated"],
+                        time_ms=result["time_ms"],
+                        memory_mb=result["memory_mb"]
+                    )
+                else:
+                    f.write(f"{algorithm_name}\nNo solution\n\n")
+
+        # Display a success message after saving the file
+        messagebox.showinfo("Output Saved", "All outputs have been successfully saved.")

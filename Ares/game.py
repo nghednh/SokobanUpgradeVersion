@@ -200,7 +200,11 @@ class MazeGame:
                 return False
 
         return True
-    
+
+    import heapq
+    import tracemalloc
+    import time
+
     def a_star(self):
         priority_queue = []  # Priority queue to store nodes by estimated total cost
         initial_state = self.get_state()
@@ -211,27 +215,47 @@ class MazeGame:
         # Add the initial state to the priority queue with estimated total cost
         node = PriorityQueueNode(initial_estimated_cost, initial_cost, self, initial_path)
         heapq.heappush(priority_queue, node)
+
         visited = set()  # To avoid revisiting the same state
         visited.add(initial_state)  # Mark initial state as visited
 
         print(f"Initial state: {initial_state}")
 
+        # Track memory and time
+        nodes_generated = 0
+        tracemalloc.start()
+        start_time = time.time()
+
         while priority_queue:
             # Pop the state with the lowest estimated total cost
             node = heapq.heappop(priority_queue)
-            print(node)
             estimated_cost = node.estimated_total_cost
             current_cost = node.cost
             current_game = node.game
             path = node.path
             current_state = current_game.get_state()
 
-            print(f"Exploring state: {current_state}, Path: {path}, Cost: {current_cost}, Estimated Total Cost: {estimated_cost}")
+            print(
+                f"Exploring state: {current_state}, Path: {path}, Cost: {current_cost}, Estimated Total Cost: {estimated_cost}")
 
             # Check if the current state is a goal state
             if current_game.is_goal_state():
-                print("Goal reached with path:", path)
-                return path  # Return the path that leads to the goal
+                end_time = time.time()
+                memory_used = tracemalloc.get_traced_memory()[1] / (1024 * 1024)  # Peak memory in MB
+                tracemalloc.stop()
+
+                # Steps are the length of the path taken to reach the goal
+                steps = len(path)
+                total_time = (end_time - start_time) * 1000  # Time in milliseconds
+
+                return {
+                    "cost": current_cost,
+                    "steps": steps,
+                    "nodes_generated": nodes_generated,
+                    "time_ms": total_time,
+                    "memory_mb": memory_used,
+                    "solution_path": path
+                }
 
             # Generate successors from the current state
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
@@ -250,8 +274,20 @@ class MazeGame:
                     node = PriorityQueueNode(estimated_total_cost, new_cost, successor_game, new_path)
                     heapq.heappush(priority_queue, node)
 
+                    nodes_generated += 1
+
         print("No solution found.")
-        return None
+        tracemalloc.stop()
+        return {
+            "cost": None,
+            "steps": None,
+            "nodes_generated": nodes_generated,
+            "time_ms": (time.time() - start_time) * 1000,
+            "memory_mb": tracemalloc.get_traced_memory()[1] / (1024 * 1024),
+            "solution_path": None
+        }
+
+
 
     def bfs(self):
         queue = deque([(self, [], 0)])  # start from initial state with an empty path
@@ -260,20 +296,39 @@ class MazeGame:
         visited.add(initial_state)  # Add initial state to visited
         print(f"Initial state: {initial_state}")
 
+        # Track memory and time
+        nodes_generated = 0
+        tracemalloc.start()
+        start_time = time.time()
+
         while queue:
             (current_game, path, total_cost) = queue.popleft()
             current_state = current_game.get_state()
-            #print(f"Exploring state: {current_state}, Path: {path}, Total cost: {total_cost}")
 
             # Check if current state is a goal state
             if current_game.is_goal_state():
-                print("Goal reached with path:", path)
-                return path  # Return the path that leads to the goal
+                end_time = time.time()
+                memory_used = tracemalloc.get_traced_memory()[1] / (1024 * 1024)  # Peak memory in MB
+                tracemalloc.stop()
 
-        # Generate successors from the current state
+                # Steps are the length of the path taken to reach the goal
+                steps = len(path)
+                total_time = (end_time - start_time) * 1000  # Time in milliseconds
+
+                return {
+                    "cost": total_cost,
+                    "steps": steps,
+                    "nodes_generated": nodes_generated,
+                    "time_ms": total_time,
+                    "memory_mb": memory_used,
+                    "solution_path": path
+                }
+
+            # Generate successors from the current state
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
                 successor_state = successor_game.get_state()
                 if successor_state not in visited:
+
                     if successor_state not in queue:
                         # Create a new MazeGame instance for the successor state
                         # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
@@ -287,8 +342,21 @@ class MazeGame:
                         queue.append((successor_game, new_path, total_cost + move_cost))
                         #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
 
+
         print("No solution found.")
-        return None
+        tracemalloc.stop()
+        return {
+            "cost": None,
+            "steps": None,
+            "nodes_generated": nodes_generated,
+            "time_ms": (time.time() - start_time) * 1000,
+            "memory_mb": tracemalloc.get_traced_memory()[1] / (1024 * 1024),
+            "solution_path": None
+        }
+
+    import tracemalloc
+    import time
+
     def dfs(self):
         stack = [(self, [], 0)]  # start from initial state with an empty path
         visited = set()  # To avoid revisiting the same state
@@ -296,17 +364,37 @@ class MazeGame:
         visited.add(initial_state)  # Add initial state to visited
         print(f"Initial state: {initial_state}")
 
+        # Track memory and time
+        nodes_generated = 0
+        tracemalloc.start()
+        start_time = time.time()
+
         while stack:
             (current_game, path, total_cost) = stack.pop()
             current_state = current_game.get_state()
+
             print(f"Exploring state: {current_state}, Path: {path}, Total cost: {total_cost}")
 
             # Check if current state is a goal state
             if current_game.is_goal_state():
-                print("Goal reached with path:", path)
-                return path  # Return the path that leads to the goal
+                end_time = time.time()
+                memory_used = tracemalloc.get_traced_memory()[1] / (1024 * 1024)  # Peak memory in MB
+                tracemalloc.stop()
 
-        # Generate successors from the current state
+                # Steps are the length of the path taken to reach the goal
+                steps = len(path)
+                total_time = (end_time - start_time) * 1000  # Time in milliseconds
+
+                return {
+                    "cost": total_cost,
+                    "steps": steps,
+                    "nodes_generated": nodes_generated,
+                    "time_ms": total_time,
+                    "memory_mb": memory_used,
+                    "solution_path": path
+                }
+
+            # Generate successors from the current state
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
                 successor_state = successor_game.get_state()
                 if successor_state not in visited:
@@ -323,8 +411,18 @@ class MazeGame:
                         stack.append((successor_game, new_path, total_cost + move_cost))
                         #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
 
+
         print("No solution found.")
-        return None
+        tracemalloc.stop()
+        return {
+            "cost": None,
+            "steps": None,
+            "nodes_generated": nodes_generated,
+            "time_ms": (time.time() - start_time) * 1000,
+            "memory_mb": tracemalloc.get_traced_memory()[1] / (1024 * 1024),
+            "solution_path": None
+        }
+
     def ucs(self):
 
         # Counter for tie-breaking
