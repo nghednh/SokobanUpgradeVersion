@@ -272,19 +272,8 @@ class MazeGame:
                     heapq.heappush(priority_queue, node)
 
                     nodes_generated += 1
-
-        # print("No solution found.")
-
         tracemalloc.stop()
-        return {
-            "cost": None,
-            "steps": None,
-            "nodes_generated": nodes_generated,
-            "time_ms": (time.time() - start_time) * 1000,
-            "memory_mb": tracemalloc.get_traced_memory()[1] / (1024 * 1024),
-            "solution_path": None
-        }
-
+        print("No solution found.")
 
 
     def bfs(self):
@@ -340,20 +329,8 @@ class MazeGame:
                     queue.append((successor_game, new_path, total_cost + move_cost))
                         #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
 
-
-        print("No solution found.")
         tracemalloc.stop()
-        return {
-            "cost": None,
-            "steps": None,
-            "nodes_generated": nodes_generated,
-            "time_ms": (time.time() - start_time) * 1000,
-            "memory_mb": tracemalloc.get_traced_memory()[1] / (1024 * 1024),
-            "solution_path": None
-        }
-
-    import tracemalloc
-    import time
+        print("No solution found.")
 
     def dfs(self):
         stack = [(self, [], 0)]  # start from initial state with an empty path
@@ -398,6 +375,8 @@ class MazeGame:
                 nodes_generated += 1
                 if successor_state not in visited:
 
+
+
                 # Create a new MazeGame instance for the successor state
                     # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
                     # successor_game.ares_pos = successor_state[0]
@@ -410,17 +389,8 @@ class MazeGame:
                     stack.append((successor_game, new_path, total_cost + move_cost))
                         #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
 
-
-        print("No solution found.")
         tracemalloc.stop()
-        return {
-            "cost": None,
-            "steps": None,
-            "nodes_generated": nodes_generated,
-            "time_ms": (time.time() - start_time) * 1000,
-            "memory_mb": tracemalloc.get_traced_memory()[1] / (1024 * 1024),
-            "solution_path": None
-        }
+        print("No solution found.")
 
     def ucs(self):
 
@@ -478,14 +448,5 @@ class MazeGame:
         end_time = time.time()
         total_time = (end_time - start_time) * 1000  # Time in milliseconds
         memory_used = tracemalloc.get_traced_memory()[1] / (1024 * 1024)  # Peak memory in MB
-               
-        return {
-        "cost": None,
-        "steps": None,
-        "nodes_generated": nodes_generated,
-        "time_ms": total_time,
-        "memory_mb": memory_used,
-        "solution_path": None
-    }
     
 
