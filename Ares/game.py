@@ -325,9 +325,9 @@ class MazeGame:
             # Generate successors from the current state
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
                 successor_state = successor_game.get_state()
+                nodes_generated += 1
                 if successor_state not in visited:
 
-                    if successor_state not in queue:
                         # Create a new MazeGame instance for the successor state
                         # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
                         # successor_game.ares_pos = successor_state[0]
@@ -335,9 +335,9 @@ class MazeGame:
                         # successor_game.total_cost = current_game.total_cost + move_cost
 
                         # Mark as visited and enqueue for further exploration
-                        visited.add(successor_state)
-                        new_path = path + [move_dir]
-                        queue.append((successor_game, new_path, total_cost + move_cost))
+                    visited.add(successor_state)
+                    new_path = path + [move_dir]
+                    queue.append((successor_game, new_path, total_cost + move_cost))
                         #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
 
 
@@ -395,7 +395,12 @@ class MazeGame:
             # Generate successors from the current state
             for successor_game, move_dir, move_cost in current_game.getSuccessors():
                 successor_state = successor_game.get_state()
+                nodes_generated += 1
                 if successor_state not in visited:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2e37138133a5c157c8c396cad4494d88055065f9
                 # Create a new MazeGame instance for the successor state
                     # successor_game = MazeGame([row[:] for row in current_game.grid], current_game.stone_weights)
                     # successor_game.ares_pos = successor_state[0]
@@ -403,9 +408,9 @@ class MazeGame:
                     # successor_game.total_cost = current_game.total_cost + move_cost
 
                 # Mark as visited and enqueue for further exploration
-                        visited.add(successor_state)
-                        new_path = path + [move_dir]
-                        stack.append((successor_game, new_path, total_cost + move_cost))
+                    visited.add(successor_state)
+                    new_path = path + [move_dir]
+                    stack.append((successor_game, new_path, total_cost + move_cost))
                         #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {total_cost + move_cost}")
 
 
@@ -463,14 +468,13 @@ class MazeGame:
             for successor_game, move_dir, move_cost in current_position.getSuccessors():   
                 successor_state = successor_game.get_state()
                 nodes_generated += 1
-                if successor_state not in explored:
-                    if successor_state not in frontier or (cost + move_cost) < path_cost[successor_state]:
+                if successor_state not in explored or (cost + move_cost) < path_cost[successor_state]:
                         # add duplicated entry but when node expand this code in explored and has more cost than current cost 
                         # so it does not affect to algorithm
-                        path_cost[successor_state] = cost + move_cost
-                        new_path = path + [move_dir]
-                        heapq.heappush(frontier, (cost + move_cost, next(counter), successor_game, new_path))
-                        explored.add(successor_state)
+                    path_cost[successor_state] = cost + move_cost
+                    new_path = path + [move_dir]
+                    heapq.heappush(frontier, (cost + move_cost, next(counter), successor_game, new_path))
+                    explored.add(successor_state)
                         #print(f"Enqueued successor state: {successor_game.get_state()}, Path so far: {new_path}, Cost: {cost + move_cost}")
         print(f"No Solution found.") 
         tracemalloc.stop()
