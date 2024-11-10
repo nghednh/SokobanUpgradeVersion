@@ -225,6 +225,10 @@ class MazeGameUI:
         print("Congratulations! You completed the challenge!")
         self.congrats_label = tk.Label(self.root, text="Congratulations! You completed the challenge!")
         self.congrats_label.pack()
+    def show_nosolution(self):
+        self.congrats_label = tk.Label(self.root, text="No solution")
+        self.congrats_label.pack()
+
 
 
     def increase_speed_and_load_new_animation(self):
@@ -257,7 +261,7 @@ class MazeGameUI:
             solution_path = result.get("solution_path")
             self.simulate_solution(solution_path)
         else:
-            print("No solution")
+            self.show_nosolution()
 
     def bfs(self):
         self.load_selected_level(self.level_options)
@@ -266,7 +270,7 @@ class MazeGameUI:
             solution_path = result.get("solution_path")
             self.simulate_solution(solution_path)
         else:
-            print("No solution")
+            self.show_nosolution()
 
 
     def ucs(self):
@@ -282,7 +286,7 @@ class MazeGameUI:
             memory_mb = result["memory_mb"]
             #self.write_output("UCS", solution_path, steps, cost, nodes_generated, time_ms, memory_mb)
         else:
-            print("No solution")
+            self.show_nosolution()
 
     def astar(self):
         self.load_selected_level(self.level_options)
@@ -291,7 +295,7 @@ class MazeGameUI:
             solution_path = result.get("solution_path")
             self.simulate_solution(solution_path)
         else:
-            print("No solution")
+            self.show_nosolution()
 
     def simulate_solution(self, solution_path):
 
